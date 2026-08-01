@@ -1,10 +1,10 @@
-import { AccountsPage } from '../features/accounts/index.ts'
-import { BudgetsPage } from '../features/budgets/index.ts'
-import { CategoriesPage } from '../features/categories/index.ts'
-import { ReportsPage } from '../features/reports/index.ts'
-import { TransactionsPage } from '../features/transactions/index.ts'
-import type { Account } from '../features/accounts/index.ts'
-import type { AppRouteId } from './route-ids.ts'
+import type {Account} from '../features/accounts'
+import {AccountsPage} from '../features/accounts'
+import {BudgetsPage} from '../features/budgets'
+import {CategoriesPage} from '../features/categories'
+import {ReportsPage} from '../features/reports'
+import {TransactionsPage} from '../features/transactions'
+import type {AppRouteId} from './route-ids.ts'
 
 type RouteViewProps = {
   route: AppRouteId
