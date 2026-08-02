@@ -1,4 +1,4 @@
-export type { Category, CategoryKind } from './model.ts'
+export type { Category, CategoryType } from './model.ts'
 export {
   createCategoryService,
   type CategoryRepository,
