@@ -1,6 +1,6 @@
 import type { Money } from '../../domain/money'
 
-export type AccountType = 'cash' | 'bank' | 'credit' | 'savings'
+export type AccountType = 'Cash' | 'Bank' | 'Credit Card' | 'E-Wallet'
 
 export type Account = {
   readonly id: string
