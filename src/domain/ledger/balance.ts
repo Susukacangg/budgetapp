@@ -1,10 +1,10 @@
 import {
   addMoney,
-  assertSameCurrency,
+  assertHomeCurrency,
   moneyFromMinorUnits,
   type Money,
   zeroMoney,
-} from '../money/index.ts'
+} from '../money'
 import type { JournalEntry, PostingSide } from './types.ts'
 
 export class UnbalancedJournalError extends Error {
@@ -22,19 +22,16 @@ export function sumSide(
   const matching = entry.postings.filter((p) => p.side === side)
   if (matching.length === 0) return null
 
-  let total = zeroMoney(
-    matching[0]!.amount.currencyCode,
-    matching[0]!.amount.scale,
-  )
+  let total = zeroMoney()
   for (const posting of matching) {
-    assertSameCurrency(total, posting.amount)
+    assertHomeCurrency(posting.amount)
     total = addMoney(total, posting.amount)
   }
   return total
 }
 
 /**
- * Verifies double-entry balance. Throws on currency mix or debit/credit mismatch.
+ * Verifies double-entry balance. Throws on non-MYR amounts or debit/credit mismatch.
  * Does not silently repair inconsistency.
  */
 export function assertBalanced(entry: JournalEntry): void {
@@ -44,16 +41,12 @@ export function assertBalanced(entry: JournalEntry): void {
     )
   }
 
-  const currency = entry.postings[0]!.amount.currencyCode
-  const scale = entry.postings[0]!.amount.scale
-
   for (const posting of entry.postings) {
-    if (
-      posting.amount.currencyCode !== currency ||
-      posting.amount.scale !== scale
-    ) {
+    try {
+      assertHomeCurrency(posting.amount)
+    } catch {
       throw new UnbalancedJournalError(
-        'Journal entry mixes currencies or scales',
+        'Journal entry contains a non-MYR amount',
       )
     }
     if (posting.amount.minorUnits <= 0n) {
@@ -88,10 +81,7 @@ export function signedContribution(
   side: PostingSide,
   normalSide: PostingSide,
 ): Money {
+  assertHomeCurrency(amount)
   const sign = side === normalSide ? 1n : -1n
-  return moneyFromMinorUnits(
-    amount.minorUnits * sign,
-    amount.currencyCode,
-    amount.scale,
-  )
+  return moneyFromMinorUnits(amount.minorUnits * sign)
 }

@@ -1,12 +1,10 @@
 import {
+  HOME_CURRENCY_DISPLAY,
   moneyToDecimalString,
   type Money,
-} from '../../domain/money/index.ts'
+} from '../../domain/money'
 
-/**
- * Display-only formatting from minor units — no binary float conversion.
- * Locale-aware currency glyphs can be layered later without changing domain math.
- */
+/** Display-only MYR formatting — no binary float conversion. */
 export function formatMoney(value: Money): string {
-  return `${value.currencyCode} ${moneyToDecimalString(value)}`
+  return `${HOME_CURRENCY_DISPLAY} ${moneyToDecimalString(value)}`
 }

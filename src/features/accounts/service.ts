@@ -1,3 +1,4 @@
+import { assertHomeCurrency } from '../../domain/money'
 import type { Account, CreateAccountInput } from './model.ts'
 
 export type AccountRepository = {
@@ -22,14 +23,11 @@ export function createAccountService(
       if (!name) {
         throw new Error('Account name is required')
       }
-      if (input.openingBalance.currencyCode !== input.currencyCode) {
-        throw new Error('Opening balance currency must match account currency')
-      }
+      assertHomeCurrency(input.openingBalance)
       const account: Account = {
         id: deps.nextId(),
         name,
         type: input.type,
-        currencyCode: input.currencyCode,
         openingBalance: input.openingBalance,
         version: 1,
       }

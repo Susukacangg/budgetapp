@@ -1,28 +1,23 @@
-/** ISO 4217 alphabetic currency code (e.g. SGD, USD). */
-export type CurrencyCode = string
+/**
+ * Sole supported currency: Malaysian Ringgit.
+ * ISO 4217 code is MYR; common display symbol is RM.
+ */
+export const HOME_CURRENCY = 'MYR' as const
+export type CurrencyCode = typeof HOME_CURRENCY
 
-const CURRENCY_CODE_PATTERN = /^[A-Z]{3}$/
+export const HOME_CURRENCY_SCALE = 2
+export const HOME_CURRENCY_DISPLAY = 'RM'
 
+/**
+ * Accepts MYR or RM at boundaries; always normalizes to MYR.
+ * Rejects every other currency — this app is single-currency.
+ */
 export function parseCurrencyCode(value: string): CurrencyCode {
   const normalized = value.trim().toUpperCase()
-  if (!CURRENCY_CODE_PATTERN.test(normalized)) {
-    throw new Error(`Invalid currency code: ${value}`)
+  if (normalized === 'MYR' || normalized === 'RM') {
+    return HOME_CURRENCY
   }
-  return normalized
-}
-
-/** Decimal places for minor units. Defaults cover common ISO currencies. */
-export function defaultScaleForCurrency(currencyCode: CurrencyCode): number {
-  switch (currencyCode) {
-    case 'JPY':
-    case 'KRW':
-    case 'VND':
-      return 0
-    case 'BHD':
-    case 'KWD':
-    case 'OMR':
-      return 3
-    default:
-      return 2
-  }
+  throw new Error(
+    `Unsupported currency: ${value}. Only MYR (RM) is supported.`,
+  )
 }

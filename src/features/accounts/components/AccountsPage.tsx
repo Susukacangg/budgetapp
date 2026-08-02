@@ -1,5 +1,5 @@
 import type { Account } from '../model.ts'
-import { formatMoney } from '../../../shared/format/money.ts'
+import { formatMoney } from '../../../shared/format'
 
 type AccountsPageProps = {
   accounts: readonly Account[]
@@ -19,8 +19,7 @@ export function AccountsPage({ accounts }: AccountsPageProps) {
               <strong>{account.name}</strong>
               <span className="muted">
                 {' '}
-                · {account.type} · {account.currencyCode} ·{' '}
-                {formatMoney(account.openingBalance)}
+                · {account.type} · {formatMoney(account.openingBalance)}
               </span>
             </li>
           ))}

@@ -1,12 +1,14 @@
 export {
-  defaultScaleForCurrency,
+  HOME_CURRENCY,
+  HOME_CURRENCY_DISPLAY,
+  HOME_CURRENCY_SCALE,
   parseCurrencyCode,
   type CurrencyCode,
 } from './currency.ts'
 
 export {
   addMoney,
-  assertSameCurrency,
+  assertHomeCurrency,
   compareMoney,
   CurrencyMismatchError,
   moneyFromDecimalString,

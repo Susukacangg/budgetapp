@@ -1,5 +1,6 @@
 import {
-  defaultScaleForCurrency,
+  HOME_CURRENCY,
+  HOME_CURRENCY_SCALE,
   parseCurrencyCode,
   type CurrencyCode,
 } from './currency.ts'
@@ -12,44 +13,51 @@ export type RoundingMode = 'half_up' | 'half_even' | 'floor' | 'ceil'
 
 export type Money = {
   readonly minorUnits: bigint
+  /** Always MYR — kept on the value so amount and currency stay paired. */
   readonly currencyCode: CurrencyCode
+  /** Always 2 for MYR (sen). */
   readonly scale: number
 }
 
 export class CurrencyMismatchError extends Error {
-  constructor(left: CurrencyCode, right: CurrencyCode) {
-    super(`Currency mismatch: ${left} vs ${right}`)
+  constructor(message = 'Money value is not MYR') {
+    super(message)
     this.name = 'CurrencyMismatchError'
   }
 }
 
-export function moneyFromMinorUnits(
-  minorUnits: bigint,
-  currencyCode: string,
-  scale: number = defaultScaleForCurrency(parseCurrencyCode(currencyCode)),
-): Money {
+function assertHomeMoneyShape(currencyCode: string, scale: number): void {
   const code = parseCurrencyCode(currencyCode)
-  assertValidScale(scale)
+  if (code !== HOME_CURRENCY) {
+    throw new CurrencyMismatchError(
+      `Unsupported currency: ${currencyCode}. Only MYR (RM) is supported.`,
+    )
+  }
+  if (scale !== HOME_CURRENCY_SCALE) {
+    throw new CurrencyMismatchError(
+      `Unsupported scale: ${scale}. MYR uses scale ${HOME_CURRENCY_SCALE}.`,
+    )
+  }
+}
+
+export function moneyFromMinorUnits(minorUnits: bigint): Money {
   return Object.freeze({
     minorUnits,
-    currencyCode: code,
-    scale,
+    currencyCode: HOME_CURRENCY,
+    scale: HOME_CURRENCY_SCALE,
   })
 }
 
 /**
- * Parses a decimal string (e.g. "12.34", "-0.50") into Money.
+ * Parses a decimal string (e.g. "12.34", "-0.50") into MYR Money.
  * Rejects scientific notation and binary floats — pass strings only at boundaries.
  */
 export function moneyFromDecimalString(
   decimal: string,
-  currencyCode: string,
-  options?: { scale?: number; rounding?: RoundingMode },
+  options?: { rounding?: RoundingMode },
 ): Money {
-  const code = parseCurrencyCode(currencyCode)
-  const scale = options?.scale ?? defaultScaleForCurrency(code)
+  const scale = HOME_CURRENCY_SCALE
   const rounding = options?.rounding ?? 'half_even'
-  assertValidScale(scale)
 
   const trimmed = decimal.trim()
   if (!/^-?\d+(\.\d+)?$/.test(trimmed)) {
@@ -64,7 +72,7 @@ export function moneyFromDecimalString(
     const padded = fractionPart.padEnd(scale, '0')
     const digits = `${wholePart}${padded}`
     const minor = BigInt(digits || '0')
-    return moneyFromMinorUnits(negative ? -minor : minor, code, scale)
+    return moneyFromMinorUnits(negative ? -minor : minor)
   }
 
   const kept = fractionPart.slice(0, scale)
@@ -77,75 +85,52 @@ export function moneyFromDecimalString(
     minor += 1n
   }
 
-  return moneyFromMinorUnits(negative ? -minor : minor, code, scale)
+  return moneyFromMinorUnits(negative ? -minor : minor)
 }
 
-export function zeroMoney(currencyCode: string, scale?: number): Money {
-  const code = parseCurrencyCode(currencyCode)
-  return moneyFromMinorUnits(
-    0n,
-    code,
-    scale ?? defaultScaleForCurrency(code),
-  )
+export function zeroMoney(): Money {
+  return moneyFromMinorUnits(0n)
 }
 
-export function assertSameCurrency(left: Money, right: Money): void {
-  if (
-    left.currencyCode !== right.currencyCode ||
-    left.scale !== right.scale
-  ) {
-    throw new CurrencyMismatchError(left.currencyCode, right.currencyCode)
-  }
+/** Defensive check for values loaded from storage or external input. */
+export function assertHomeCurrency(value: Money): void {
+  assertHomeMoneyShape(value.currencyCode, value.scale)
 }
 
 export function addMoney(left: Money, right: Money): Money {
-  assertSameCurrency(left, right)
-  return moneyFromMinorUnits(
-    left.minorUnits + right.minorUnits,
-    left.currencyCode,
-    left.scale,
-  )
+  assertHomeCurrency(left)
+  assertHomeCurrency(right)
+  return moneyFromMinorUnits(left.minorUnits + right.minorUnits)
 }
 
 export function subtractMoney(left: Money, right: Money): Money {
-  assertSameCurrency(left, right)
-  return moneyFromMinorUnits(
-    left.minorUnits - right.minorUnits,
-    left.currencyCode,
-    left.scale,
-  )
+  assertHomeCurrency(left)
+  assertHomeCurrency(right)
+  return moneyFromMinorUnits(left.minorUnits - right.minorUnits)
 }
 
 export function negateMoney(value: Money): Money {
-  return moneyFromMinorUnits(
-    -value.minorUnits,
-    value.currencyCode,
-    value.scale,
-  )
+  assertHomeCurrency(value)
+  return moneyFromMinorUnits(-value.minorUnits)
 }
 
 export function compareMoney(left: Money, right: Money): -1 | 0 | 1 {
-  assertSameCurrency(left, right)
+  assertHomeCurrency(left)
+  assertHomeCurrency(right)
   if (left.minorUnits < right.minorUnits) return -1
   if (left.minorUnits > right.minorUnits) return 1
   return 0
 }
 
 export function moneyToDecimalString(value: Money): string {
+  assertHomeCurrency(value)
   const negative = value.minorUnits < 0n
   const abs = negative ? -value.minorUnits : value.minorUnits
   const digits = abs.toString().padStart(value.scale + 1, '0')
-  const whole =
-    value.scale === 0 ? digits : digits.slice(0, -value.scale)
-  const fraction = value.scale === 0 ? '' : digits.slice(-value.scale)
-  const body = value.scale === 0 ? whole : `${whole}.${fraction}`
+  const whole = digits.slice(0, -value.scale)
+  const fraction = digits.slice(-value.scale)
+  const body = `${whole}.${fraction}`
   return negative ? `-${body}` : body
-}
-
-function assertValidScale(scale: number): void {
-  if (!Number.isInteger(scale) || scale < 0 || scale > 10) {
-    throw new Error(`Unsupported money scale: ${scale}`)
-  }
 }
 
 function decideRoundUp(

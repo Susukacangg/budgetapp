@@ -94,7 +94,7 @@ const MODULE_META: Record<
   money: {
     label: "domain/money",
     layer: "domain",
-    purpose: "Amount + currency, rounding",
+    purpose: "MYR amounts + rounding",
   },
   ledger: {
     label: "domain/ledger",
@@ -349,7 +349,7 @@ export default function BudgetappModuleOrganization() {
                 <TreeLine>│   ├── categories/</TreeLine>
                 <TreeLine>│   └── reports/</TreeLine>
                 <TreeLine>├── domain/</TreeLine>
-                <TreeLine>│   ├── money/           # Amount, Currency</TreeLine>
+                <TreeLine>│   ├── money/           # MYR Amount (RM)</TreeLine>
                 <TreeLine>│   └── ledger/          # posts, balances</TreeLine>
                 <TreeLine>├── infrastructure/</TreeLine>
                 <TreeLine>│   ├── persistence/</TreeLine>
@@ -388,9 +388,8 @@ export default function BudgetappModuleOrganization() {
                     <Code>accounts</Code>, <Code>transactions</Code>).
                   </Text>
                   <Text size="small">
-                    Money types: <Code>Money</Code> / <Code>Amount</Code> +{" "}
-                    <Code>currencyCode</Code> — never bare{" "}
-                    <Code>number</Code>.
+                    Money types: <Code>Money</Code> in MYR (display RM) —
+                    never bare <Code>number</Code>.
                   </Text>
                   <Text size="small">
                     Files: <Code>kebab-case</Code> for multi-word modules; React
@@ -420,7 +419,7 @@ export default function BudgetappModuleOrganization() {
           rows={[
             [
               "domain/money",
-              "Decimal amounts, currency pairing, explicit rounding",
+              "MYR decimal amounts, explicit rounding",
               "UI, storage, network, Date.now()",
             ],
             [
@@ -596,7 +595,7 @@ export default function BudgetappModuleOrganization() {
       <Callout tone="warning" title="Immediate gap vs financial-grade bar">
         There is no money type, ledger, schema validation, audit trail, or
         injectable clock yet. Before UI polish, introduce{" "}
-        <Code>domain/money</Code> (decimal + currency) and persistence behind an
+        <Code>domain/money</Code> (MYR decimals) and persistence behind an
         idempotency-aware service boundary — otherwise float and ad-hoc state
         will bake into the UI.
       </Callout>

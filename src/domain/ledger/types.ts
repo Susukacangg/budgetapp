@@ -1,4 +1,4 @@
-import type { Money } from '../money/index.ts'
+import type { Money } from '../money'
 
 /** Direction of a single posting within a balanced journal entry. */
 export type PostingSide = 'debit' | 'credit'
@@ -18,7 +18,7 @@ export type Posting = {
 
 /**
  * Immutable journal entry. Invariant: sum(debits) === sum(credits)
- * in the same currency before persistence.
+ * in MYR before persistence.
  */
 export type JournalEntry = {
   readonly id: JournalEntryId
