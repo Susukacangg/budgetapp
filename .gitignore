@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # mock data
-./src/app/fixtures/mock-data.ts
+src/app/fixtures/*
