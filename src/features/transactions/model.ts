@@ -1,4 +1,4 @@
-import type { Money } from '../../domain/money/index.ts'
+import type { Money } from '../../domain/money'
 
 export type TransactionKind = 'expense' | 'income' | 'transfer'
 

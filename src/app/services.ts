@@ -7,7 +7,7 @@ import {
   type Clock,
   type IdGenerator,
   type PersistenceAdapter,
-} from '../infrastructure/index.ts'
+} from '../infrastructure'
 
 export type AppServices = {
   readonly clock: Clock
