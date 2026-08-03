@@ -1,11 +1,11 @@
 import type { Account } from '../model.ts'
-import { formatMoney } from '../../../shared/format'
+import {List} from "../../../shared/ui/";
 
 type AccountsPageProps = {
   accounts: readonly Account[]
 }
 
-export function AccountsPage({ accounts }: AccountsPageProps) {
+export function AccountsPage({accounts}: AccountsPageProps) {
   return (
     <section className="page">
       <h2>Accounts</h2>
@@ -13,17 +13,7 @@ export function AccountsPage({ accounts }: AccountsPageProps) {
       {accounts.length === 0 ? (
         <p className="muted">No accounts yet.</p>
       ) : (
-        <ul className="list">
-          {accounts.map((account) => (
-            <li key={account.id}>
-              <strong>{account.name}</strong>
-              <span className="muted">
-                {' '}
-                · {account.type} · {formatMoney(account.openingBalance)}
-              </span>
-            </li>
-          ))}
-        </ul>
+          <List items={accounts}/>
       )}
     </section>
   )
