@@ -184,19 +184,22 @@ p {
   font-weight: 600;
 }
 
-.add-btn {
+.round-btn {
   appearance: none;
   border: none;
   border-radius: 50%;
-  width: 3rem;
-  height: 3rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+}
+
+.add-btn {
+  width: 3rem;
+  height: 3rem;
   padding: 0;
   background-color: var(--accent);
   color: var(--surface);
-  cursor: pointer;
   box-shadow:
     0 2px 6px rgba(17, 24, 39, 0.3),
     0 8px 20px rgba(31, 111, 91, 0.3);
@@ -245,4 +248,95 @@ p {
   .list-item:hover {
     transform: none;
   }
+}
+
+.modal-shell {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 0.2s allow-discrete ease-in;
+}
+
+.modal-shell.is-open {
+  visibility: visible;
+  pointer-events: auto;
+
+  @starting-style {
+    visibility: hidden;
+  }
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(100, 100, 100, 0.2);
+  backdrop-filter: blur(2px);
+  visibility: hidden;
+  opacity: 0;
+  transition: all ease-in 0.2s allow-discrete;
+}
+
+.modal-shell.is-open .modal-backdrop {
+  opacity: 1;
+  visibility: visible;
+
+  @starting-style {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.modal-card {
+  position: relative; /* positioning context for .modal-btn */
+  z-index: 1;
+  background-color: var(--surface);
+  width: 40%;
+  height: 90%;
+  border-radius: 10px;
+  transform: scale(0);
+  visibility: hidden;
+  transition: all 0.7s allow-discrete cubic-bezier(0.68, -0.5, 0.165, 1.55);
+}
+
+.modal-shell.is-open .modal-card {
+  transform: scale(1);
+  visibility: visible;
+
+  @starting-style{
+    transform: scale(0);
+    visibility: hidden;
+  }
+}
+
+.modal-btn {
+  position: absolute; /* relative to .modal-card, not the viewport */
+  top: 1rem;
+  right: 1rem;
+  background-color: var(--accent);
+  color: var(--bg);
+  font-size: 20px;
+  box-shadow:
+    0 2px 2px rgba(17, 24, 39, 0.3),
+    0 4px 4px rgba(31, 111, 91, 0.3);
+  transition: all 0.2s ease-in;
+}
+
+.modal-btn:hover {
+  box-shadow:
+    1px 2px 4px rgba(17, 24, 39, 0.3),
+    1px 6px 6px rgba(31, 111, 91, 0.3);
+  transform: translateY(-2.5px);
+}
+
+.modal-btn:active {
+  background-color: color-mix(in srgb, var(--accent) 80%, black);
+  transform: translateY(-0.3px);
 }
