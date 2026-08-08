@@ -1,12 +1,13 @@
 import {type ReactNode, useEffect, useRef} from 'react'
 
 type ModalProps = {
+  title?: string
   isOpen: boolean
   onClose: () => void
   children: ReactNode
 }
 
-export function Modal({isOpen, onClose, children}: ModalProps) {
+export function Modal({title, isOpen, onClose, children}: ModalProps) {
   const shellRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -44,13 +45,16 @@ export function Modal({isOpen, onClose, children}: ModalProps) {
         tabIndex={-1}
       />
       <div className="modal-card">
-        <button
-          type="button"
-          className="round-btn hover-btn modal-btn"
-          onClick={onClose}
-        >
-          ×
-        </button>
+        <div className="menu-bar">
+          <h2 className="modal-title">{title}</h2>
+          <button
+            type="button"
+            className="round-btn hover-btn modal-btn"
+            onClick={onClose}
+          >
+            ×
+          </button>
+        </div>
         {/*area for modal contents*/}
         {children}
       </div>

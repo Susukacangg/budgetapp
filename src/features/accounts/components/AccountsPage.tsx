@@ -21,7 +21,8 @@ export function AccountsPage({accounts}: AccountsPageProps) {
             )}
             <AddButton onClick={() => setIsModalOpen(true)}
             />
-            <Modal isOpen={isModalOpen}
+            <Modal title={"Add Account"}
+                   isOpen={isModalOpen}
                    onClose={() => setIsModalOpen(false)}
             >
                 <AccountsForm/>
