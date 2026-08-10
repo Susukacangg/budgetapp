@@ -25,3 +25,7 @@ dist-ssr
 
 # mock data
 src/app/fixtures/*
+
+# env variables
+.env
+.env.*.local
