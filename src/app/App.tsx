@@ -14,7 +14,7 @@ export default function App({accounts = mockAccounts}: AppProps) {
 
   return (
     <AppShell
-      title="budgetapp"
+      title={`${import.meta.env.VITE_APP_TITLE}`}
       nav={
         <>
           {APP_ROUTES.map((item) => (
