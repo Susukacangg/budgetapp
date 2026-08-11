@@ -8,13 +8,12 @@ import type {AppRouteId} from './route-ids.ts'
 
 type RouteViewProps = {
   route: AppRouteId
-  accounts: readonly Account[]
 }
 
-export function RouteView({ route, accounts }: RouteViewProps) {
+export function RouteView({ route }: RouteViewProps) {
   switch (route) {
     case 'accounts':
-      return <AccountsPage accounts={accounts} />
+      return <AccountsPage />
     case 'transactions':
       return <TransactionsPage />
     case 'budgets':

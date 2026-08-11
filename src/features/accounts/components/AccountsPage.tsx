@@ -4,12 +4,9 @@ import {AddButton, List, Modal} from '../../../shared/ui/'
 import {AccountsForm} from "./AccountsForm.tsx";
 import {insert} from "../repository.ts"
 
-type AccountsPageProps = {
-  accounts: readonly Account[]
-}
-
-export function AccountsPage({accounts}: AccountsPageProps) {
+export function AccountsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [accountsList, setAccountsList] = useState<Account[]>([])
 
     async function addNewAccount(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -37,10 +34,10 @@ export function AccountsPage({accounts}: AccountsPageProps) {
         <section className="page">
             <h2>Accounts</h2>
             <p className="muted">Cash, bank, credit, and savings accounts.</p>
-            {accounts.length === 0 ? (
+            {accountsList.length === 0 ? (
                 <p className="muted">No accounts yet.</p>
             ) : (
-                <List items={accounts}/>
+                <List items={accountsList}/>
             )}
             <AddButton onClick={() => setIsModalOpen(true)}
             />
