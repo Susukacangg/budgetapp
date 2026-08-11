@@ -1,4 +1,4 @@
-import type { Account } from './model.ts'
+import type { Account, AccountDao } from './model.ts'
 import type { AccountRepository } from './service.ts'
 import { supabase } from '../../infrastructure/supabase'
 
@@ -23,24 +23,24 @@ export function createInMemoryAccountRepository(): AccountRepository {
   }
 }
 
-export async function insert(newAccount: Account): Promise<Account> {
+export async function insert(newAccount: AccountDao): Promise<AccountDao> {
   const { data, error } = await supabase
       .from('account')
-      .insert({
-        account_name: newAccount.accountName,
-        account_type: newAccount.accountType,
-        account_balance: newAccount.accountBalance,
-        account_desc: newAccount.accountDesc ?? null,
-      })
+      .insert(newAccount)
       .select()
       .single()
   if (error) {
     throw error
   }
-  return {
-    accountName: data.account_name,
-    accountType: data.account_type,
-    accountBalance: data.account_balance,
-    accountDesc: data.account_desc,
+  return data
+}
+
+export async function getAllAccounts(): Promise<AccountDao[]> {
+  const {data, error} = await supabase
+      .from('account')
+      .select()
+  if (error) {
+    throw error
   }
+  return data;
 }
