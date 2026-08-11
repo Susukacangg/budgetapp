@@ -1,7 +1,8 @@
-import {useState} from 'react'
-import type {Account} from '../model.ts'
+import {type FormEvent, useState} from 'react'
+import type {Account, AccountType} from '../model.ts'
 import {AddButton, List, Modal} from '../../../shared/ui/'
 import {AccountsForm} from "./AccountsForm.tsx";
+import {insert} from "../repository.ts"
 
 type AccountsPageProps = {
   accounts: readonly Account[]
@@ -9,6 +10,28 @@ type AccountsPageProps = {
 
 export function AccountsPage({accounts}: AccountsPageProps) {
     const [isModalOpen, setIsModalOpen] = useState(false)
+
+    async function addNewAccount(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault()
+        const form = event.currentTarget
+        const fd = new FormData(form)
+
+        const newAccount: Account = {
+            accountName: String(fd.get('account_name') ?? '').trim(),
+            accountType: String(fd.get('account_type') ?? ''),
+            accountBalance: Number(fd.get('account_balance')),
+            accountDesc: String(fd.get('account_desc') ?? '') || undefined,
+        }
+
+        try {
+            const saved = await insert(newAccount)
+            console.log('Inserted:', saved)
+            setIsModalOpen(false)
+            // refresh list (state, refetch, etc.)
+        } catch (err) {
+            console.error('Insert failed:', err)
+        }
+    }
 
     return (
         <section className="page">
@@ -25,7 +48,7 @@ export function AccountsPage({accounts}: AccountsPageProps) {
                    isOpen={isModalOpen}
                    onClose={() => setIsModalOpen(false)}
             >
-                <AccountsForm/>
+                <AccountsForm onSubmitHandler={addNewAccount}/>
             </Modal>
         </section>
     )

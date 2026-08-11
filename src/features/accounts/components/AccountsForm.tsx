@@ -1,8 +1,13 @@
+import {type FormEvent} from 'react'
 import {AppForm} from '../../../shared/ui/'
 
-export function AccountsForm() {
+type AccountsFormProps = {
+    onSubmitHandler: (event: FormEvent<HTMLFormElement>) => void
+}
+
+export function AccountsForm({onSubmitHandler}: AccountsFormProps) {
     return (
-        <AppForm>
+        <AppForm onSubmitHandler={onSubmitHandler}>
             <label htmlFor="account_name">
                 Account Name
             </label>
@@ -22,6 +27,8 @@ export function AccountsForm() {
                 Description
             </label>
             <input type="text" name="account_desc"/>
+
+            <input type="submit"/>
         </AppForm>
     )
 }
