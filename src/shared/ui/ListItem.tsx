@@ -22,7 +22,7 @@ export function ListItem({item, index}: ListItemProps) {
         <strong>{item.name}</strong>
         <span className="muted">
           {item.type}
-          {isAccount(item) ? ` · ${formatMoney(item.balance)}` : null}
+          {isAccount(item) ? ` · RM${item.balance}` : null}
         </span>
       </li>
   )
