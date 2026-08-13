@@ -10,7 +10,7 @@ export function List({items}: ListProps) {
     return (
         <ul className="list">
             {items.map((item,  index) => (
-                <ListItem item={item} index={index}/>
+                <ListItem key={item.id} item={item} index={index}/>
             ))}
         </ul>
     )

@@ -9,7 +9,7 @@ export type ListItemProps = {
 }
 
 function isAccount(item: Account | Category): item is Account {
-  return 'openingBalance' in item
+  return 'balance' in item
 }
 
 export function ListItem({item, index}: ListItemProps) {
@@ -22,7 +22,7 @@ export function ListItem({item, index}: ListItemProps) {
         <strong>{item.name}</strong>
         <span className="muted">
           {item.type}
-          {isAccount(item) ? ` · ${formatMoney(item.openingBalance)}` : null}
+          {isAccount(item) ? ` · RM${item.balance}` : null}
         </span>
       </li>
   )
