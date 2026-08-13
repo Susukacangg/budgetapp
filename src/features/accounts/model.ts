@@ -20,13 +20,6 @@ export type Account = {
   readonly createdAt: string
 }
 
-export type CreateAccountInput = {
-  readonly name: string
-  readonly type: AccountType
-  readonly openingBalance: Money
-  readonly idempotencyKey: string
-}
-
 export function convertAccountFromDao(accountDao: AccountDao): Account {
   return {
     id: accountDao.id,
