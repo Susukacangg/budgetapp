@@ -1,15 +1,9 @@
+import { z } from 'zod'
 import type { Money } from '../../domain/money'
+import type { AccountDao } from './repository.ts'
 
-export type AccountType = 'Cash' | 'Bank' | 'Credit Card' | 'E-Wallet'
-
-export type AccountDao = {
-  readonly id: number
-  readonly account_name: string
-  readonly account_type: AccountType
-  readonly account_balance: number
-  readonly account_desc?: string
-  readonly created_at: string
-}
+export const ACCOUNT_TYPES = ['Cash', 'Debit Card', 'Credit Card', 'E-Wallet'] as const
+export type AccountType = (typeof ACCOUNT_TYPES)[number]
 
 export type Account = {
   readonly id: number
@@ -31,6 +25,17 @@ export function convertAccountFromDao(accountDao: AccountDao): Account {
   }
 }
 
-export function convertAccountsFromDao(accounts: AccountDao[]): Account[] {
-  return accounts.map(convertAccountFromDao);
-}
+
+/*
+* form related schemas and types
+* */
+export const insertAccountSchema = z.object({
+  account_name: z.string().trim().min(1, 'Account name is required'),
+  account_type: z.enum(ACCOUNT_TYPES),
+  account_balance: z.coerce.number().finite('Account balance must be a valid number'),
+  account_desc: z
+      .string()
+      .trim()
+      .optional()
+      .transform((value) => (value === '' ? undefined : value)),
+})
