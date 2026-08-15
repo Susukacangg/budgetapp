@@ -4,7 +4,7 @@ import {BudgetsPage} from '../features/budgets'
 import {CategoriesPage} from '../features/categories'
 import {ReportsPage} from '../features/reports'
 import {TransactionsPage} from '../features/transactions'
-import type {AppRouteId} from './route-ids.ts'
+import {type AppRouteId, AppRoutes} from './route-ids.ts'
 
 type RouteViewProps = {
   route: AppRouteId
@@ -12,15 +12,15 @@ type RouteViewProps = {
 
 export function RouteView({ route }: RouteViewProps) {
   switch (route) {
-    case 'accounts':
+    case AppRoutes.ACCOUNTS:
       return <AccountsPage />
-    case 'transactions':
+    case AppRoutes.TRANSACTIONS:
       return <TransactionsPage />
-    case 'budgets':
+    case AppRoutes.BUDGETS:
       return <BudgetsPage />
-    case 'categories':
+    case AppRoutes.CATEGORIES:
       return <CategoriesPage />
-    case 'reports':
+    case AppRoutes.REPORTS:
       return <ReportsPage />
     default: {
       const _exhaustive: never = route
