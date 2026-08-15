@@ -5,18 +5,19 @@ import type {Category} from '../../features/categories'
 
 export type ListItemProps = {
   item: Account | Category
-  index: number
+  index: number,
+  clickable: boolean
 }
 
 function isAccount(item: Account | Category): item is Account {
   return 'balance' in item
 }
 
-export function ListItem({item, index}: ListItemProps) {
+export function ListItem({item, index, clickable}: ListItemProps) {
   return (
       <li
           key={item.id}
-          className="list-item"
+          className={`list-item ${clickable ? 'clickable' : ''}`}
           style={{'--item-index': index} as CSSProperties}
       >
         <strong>{item.name}</strong>

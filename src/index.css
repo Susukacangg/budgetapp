@@ -140,9 +140,6 @@ p {
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--surface);
-  box-shadow:
-    0 1px 2px rgba(17, 24, 39, 0.04),
-    0 1px 3px rgba(17, 24, 39, 0.06);
   transform: translateY(0);
   transition:
     transform 0.2s ease,
@@ -155,7 +152,13 @@ p {
   animation-delay: calc(0.06s * var(--item-index));
 }
 
-.list-item:hover {
+.list-item.clickable {
+  box-shadow:
+    0 1px 2px rgba(17, 24, 39, 0.04),
+    0 1px 3px rgba(17, 24, 39, 0.06);
+}
+
+.list-item.clickable:hover {
   transform: translateY(-3px);
   border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
   background: color-mix(in srgb, var(--accent-soft) 45%, var(--surface));
@@ -165,7 +168,7 @@ p {
   cursor: pointer;
 }
 
-.list-item:active {
+.list-item.clickable:active {
   transform: translateY(-0.5px);
   border-color: color-mix(in srgb, var(--accent) 100%, var(--border));
   background: color-mix(in srgb, var(--accent-soft) 100%, var(--surface));

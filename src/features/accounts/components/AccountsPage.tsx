@@ -87,7 +87,7 @@ export function AccountsPage() {
                 accountsList.length === 0 ? (
                     <p className="muted">No accounts yet.</p>
                 ) : (
-                    <List items={accountsList}/>
+                    <List items={accountsList} clickable={true}/>
                 )
             }
             <AddButton onClick={() => setIsModalOpen(true)}
