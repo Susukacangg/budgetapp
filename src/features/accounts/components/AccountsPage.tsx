@@ -7,7 +7,8 @@ import {
 import {
     AddButton,
     List,
-    Modal
+    Modal,
+    Spinner
 } from '../../../shared/ui/'
 import {
     insert,
@@ -19,6 +20,7 @@ import {AccountsForm} from "./AccountsForm.tsx";
 export function AccountsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [accountsList, setAccountsList] = useState<Account[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(true)
 
     useEffect(() => {
         let areAccountsLoaded = false
@@ -30,6 +32,7 @@ export function AccountsPage() {
                 if (areAccountsLoaded) return
                 console.log('fetched accounts: ', accounts)
                 setAccountsList(accounts.map(convertAccountFromDao))
+                setIsLoading(false)
             } catch (err) {
                 if (areAccountsLoaded) return
                 console.error('get failed:', err)
@@ -40,6 +43,7 @@ export function AccountsPage() {
 
         return () => {
             areAccountsLoaded = true
+            setIsLoading(true)
         }
     }, [])
 
@@ -74,11 +78,18 @@ export function AccountsPage() {
         <section className="page">
             <h2>Accounts</h2>
             <p className="muted">Cash, bank, credit, and savings accounts.</p>
-            {accountsList.length === 0 ? (
-                <p className="muted">No accounts yet.</p>
-            ) : (
-                <List items={accountsList}/>
-            )}
+            {
+                isLoading ? (<Spinner style={{
+                    alignSelf: 'center',
+                    marginTop: '50px'
+                }}/>)
+                :
+                accountsList.length === 0 ? (
+                    <p className="muted">No accounts yet.</p>
+                ) : (
+                    <List items={accountsList}/>
+                )
+            }
             <AddButton onClick={() => setIsModalOpen(true)}
             />
             <Modal title={"Add Account"}
