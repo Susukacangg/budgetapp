@@ -21,6 +21,8 @@ export function AccountsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [accountsList, setAccountsList] = useState<Account[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(true)
+    const [isInserting, setIsInserting] = useState<boolean>(false)
+    const [formKey, setFormKey] = useState<number>(0)
 
     useEffect(() => {
         let areAccountsLoaded = false
@@ -65,8 +67,10 @@ export function AccountsPage() {
         }
 
         try {
+            setIsInserting(true)
             const saved = await insert(parsed.data)
             console.log('Inserted:', saved)
+            setIsInserting(false)
             setIsModalOpen(false)
             // refresh list (state, refetch, etc.)
         } catch (err) {
@@ -94,9 +98,15 @@ export function AccountsPage() {
             />
             <Modal title={"Add Account"}
                    isOpen={isModalOpen}
-                   onClose={() => setIsModalOpen(false)}
+                   onClose={() => {
+                       setIsModalOpen(false)
+                       setFormKey((prev) => prev + 1)
+                   }}
             >
-                <AccountsForm onSubmitHandler={addNewAccount}/>
+                <AccountsForm key={formKey}
+                              onSubmitHandler={addNewAccount}
+                              isLoading={isInserting}
+                />
             </Modal>
         </section>
     )

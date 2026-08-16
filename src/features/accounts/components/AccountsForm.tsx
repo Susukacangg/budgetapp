@@ -1,11 +1,12 @@
 import {type FormEvent} from 'react'
-import {AppForm, CurrencyInput} from '../../../shared/ui/'
+import {AppForm, CurrencyInput, Spinner} from '../../../shared/ui/'
 
 type AccountsFormProps = {
     onSubmitHandler: (event: FormEvent<HTMLFormElement>) => void
+    isLoading: boolean
 }
 
-export function AccountsForm({onSubmitHandler}: AccountsFormProps) {
+export function AccountsForm({onSubmitHandler, isLoading}: AccountsFormProps) {
     return (
         <AppForm onSubmitHandler={onSubmitHandler}>
             <label htmlFor="account_name">
@@ -28,7 +29,14 @@ export function AccountsForm({onSubmitHandler}: AccountsFormProps) {
             </label>
             <input type="text" name="account_desc"/>
 
-            <input type="submit"/>
+            {isLoading ?
+                <Spinner size={2}
+                      style={{
+                          alignSelf: 'center',
+                          marginTop: '5px'
+                      }}
+                /> :
+                <input type="submit"/>}
         </AppForm>
     )
 }
