@@ -120,7 +120,22 @@ p {
   color: var(--text-muted);
 }
 
-/* Soft stacked cards with lift-on-hover (elevation + shadow). */
+.round-btn {
+  appearance: none;
+  border: none;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+
+
+/*
+ * CUSTOM LIST styling
+ * Soft stacked cards with lift-on-hover (elevation + shadow).
+ */
 .list {
   width: 100%;
   margin: 0;
@@ -188,16 +203,34 @@ p {
   font-weight: 600;
 }
 
-.round-btn {
-  appearance: none;
-  border: none;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+@keyframes list-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .list-item {
+    animation: none;
+    transition: none;
+  }
+
+  .list-item:hover {
+    transform: none;
+  }
+}
+
+
+
+/*
+ * FAB styling
+ *
+ */
 .add-btn {
   width: 3rem;
   height: 3rem;
@@ -232,28 +265,12 @@ p {
   outline-offset: 3px;
 }
 
-@keyframes list-item-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .list-item {
-    animation: none;
-    transition: none;
-  }
 
-  .list-item:hover {
-    transform: none;
-  }
-}
-
+/*
+ * MODAL styling
+ *
+ */
 .modal-shell {
   position: absolute;
   top: 0;
@@ -358,6 +375,12 @@ p {
   transform: translateY(-0.3px);
 }
 
+
+
+/*
+ * APP FORM styling
+ *
+ */
 div:has(> .app-form) {
   display: flex;
   justify-content: center;
