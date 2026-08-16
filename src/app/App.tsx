@@ -5,7 +5,7 @@ import {RouteView} from './routes.tsx'
 import type {Account} from '../features/accounts'
 
 export default function App() {
-  const [route, setRoute] = useState<AppRouteId>(AppRoutes.TRANSACTIONS)
+  const [route, setRoute] = useState<AppRouteId>(import.meta.env.VITE_DEFAULT_PAGE)
 
   return (
     <AppShell
