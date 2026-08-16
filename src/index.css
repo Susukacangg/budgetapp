@@ -326,12 +326,27 @@ p {
   transition: all 0.7s allow-discrete cubic-bezier(0.68, -0.5, 0.165, 1.55);
 }
 
+.modal-card.side-modal {
+  transform: scaleX(0);
+  visibility: hidden;
+}
+
 .modal-shell.is-open .modal-card {
   transform: scale(1);
   visibility: visible;
 
   @starting-style{
     transform: scale(0);
+    visibility: hidden;
+  }
+}
+
+.modal-shell.is-open .modal-card.side-modal {
+  transform: scaleX(1);
+  visibility: visible;
+
+  @starting-style{
+    transform: scaleX(0);
     visibility: hidden;
   }
 }

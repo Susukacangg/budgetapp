@@ -1,13 +1,23 @@
-import {type ReactNode, useEffect, useRef} from 'react'
+import {type ReactNode, useEffect, useRef, CSSProperties} from 'react'
+
+const MODAL_POSITIONS = ['right', 'left', 'center'] as const
+type ModalPosition = (typeof MODAL_POSITIONS)[number]
 
 type ModalProps = {
   title?: string
   isOpen: boolean
   onClose: () => void
+  position: ModalPosition
   children: ReactNode
 }
 
-export function Modal({title, isOpen, onClose, children}: ModalProps) {
+export function Modal({
+      title,
+      isOpen,
+      onClose,
+      position='center',
+      children
+    }: ModalProps) {
   const shellRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -33,6 +43,28 @@ export function Modal({title, isOpen, onClose, children}: ModalProps) {
     }
   }, [isOpen, onClose])
 
+  function getModalPositionStyle(): CSSProperties {
+    let properties: CSSProperties = {
+      height: '100%',
+      transformOrigin: `${position} center`,
+    }
+
+    switch (position) {
+      case 'right':
+        return {
+          marginLeft: 'auto',
+          ...properties
+        }
+      case 'left':
+        return {
+          marginRight: 'auto',
+          ...properties
+        }
+      default:
+        return {}
+    }
+  }
+
   return (
     <div
       ref={shellRef}
@@ -44,7 +76,9 @@ export function Modal({title, isOpen, onClose, children}: ModalProps) {
         onClick={onClose}
         tabIndex={-1}
       />
-      <div className="modal-card">
+      <div className={`modal-card ${position !== 'center' ? 'side-modal' : ''}`}
+           style={getModalPositionStyle()}
+      >
         <div className="menu-bar">
           <h2 className="modal-title">{title}</h2>
           <button
