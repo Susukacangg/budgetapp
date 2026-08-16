@@ -1,26 +1,13 @@
-import type { Account, AccountDao } from './model.ts'
-import type { AccountRepository } from './service.ts'
+import type { Account } from './model.ts'
 import { supabase } from '../../infrastructure/supabase'
 
-/** In-memory repository with idempotency-key deduplication. */
-export function createInMemoryAccountRepository(): AccountRepository {
-  const byId = new Map<string, Account>()
-  const byIdempotencyKey = new Map<string, Account>()
-
-  return {
-    list: async () => [...byId.values()],
-    getById: async (id) => byId.get(id) ?? null,
-    save: async (account, idempotencyKey) => {
-      const existing = byIdempotencyKey.get(idempotencyKey)
-      if (existing) {
-        return existing
-      }
-      const frozen = Object.freeze({ ...account })
-      byId.set(frozen.id, frozen)
-      byIdempotencyKey.set(idempotencyKey, frozen)
-      return frozen
-    },
-  }
+export type AccountDao = {
+  readonly id: number
+  readonly account_name: string
+  readonly account_type: string
+  readonly account_balance: number
+  readonly account_desc?: string
+  readonly created_at: string
 }
 
 export async function insert(newAccount: AccountDao): Promise<AccountDao> {

@@ -7,6 +7,7 @@
   --border: #ddd6cb;
   --accent: #1f6f5b;
   --accent-soft: #e4f1ed;
+  --accent-active: color-mix(in srgb, var(--accent) 80%, black);
   --sans: 'IBM Plex Sans', 'Segoe UI', sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
 
@@ -119,7 +120,22 @@ p {
   color: var(--text-muted);
 }
 
-/* Soft stacked cards with lift-on-hover (elevation + shadow). */
+.round-btn {
+  appearance: none;
+  border: none;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+
+
+/*
+ * CUSTOM LIST styling
+ * Soft stacked cards with lift-on-hover (elevation + shadow).
+ */
 .list {
   width: 100%;
   margin: 0;
@@ -140,9 +156,6 @@ p {
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--surface);
-  box-shadow:
-    0 1px 2px rgba(17, 24, 39, 0.04),
-    0 1px 3px rgba(17, 24, 39, 0.06);
   transform: translateY(0);
   transition:
     transform 0.2s ease,
@@ -155,7 +168,13 @@ p {
   animation-delay: calc(0.06s * var(--item-index));
 }
 
-.list-item:hover {
+.list-item.clickable {
+  box-shadow:
+    0 1px 2px rgba(17, 24, 39, 0.04),
+    0 1px 3px rgba(17, 24, 39, 0.06);
+}
+
+.list-item.clickable:hover {
   transform: translateY(-3px);
   border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
   background: color-mix(in srgb, var(--accent-soft) 45%, var(--surface));
@@ -165,7 +184,7 @@ p {
   cursor: pointer;
 }
 
-.list-item:active {
+.list-item.clickable:active {
   transform: translateY(-0.5px);
   border-color: color-mix(in srgb, var(--accent) 100%, var(--border));
   background: color-mix(in srgb, var(--accent-soft) 100%, var(--surface));
@@ -182,50 +201,6 @@ p {
 .list-item strong {
   color: var(--text-strong);
   font-weight: 600;
-}
-
-.round-btn {
-  appearance: none;
-  border: none;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.add-btn {
-  width: 3rem;
-  height: 3rem;
-  padding: 0;
-  background-color: var(--accent);
-  color: var(--surface);
-  box-shadow:
-    0 2px 6px rgba(17, 24, 39, 0.3),
-    0 8px 20px rgba(31, 111, 91, 0.3);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-  position: absolute;
-  bottom: 2rem;
-  right: 2rem;
-}
-
-.add-btn:hover {
-  box-shadow:
-    1px 2px 12px rgba(17, 24, 39, 0.3),
-    3px 8px 24px rgba(31, 111, 91, 0.3);
-  transform: translateY(-3px);
-}
-
-.add-btn:active {
-  background-color: color-mix(in srgb, var(--accent) 80%, black);
-  transform: translateY(-0.5px);
-}
-
-.add-btn:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
 }
 
 @keyframes list-item-in {
@@ -250,6 +225,50 @@ p {
   }
 }
 
+
+
+/*
+ * FAB styling
+ *
+ */
+.fab {
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  background-color: var(--accent);
+  color: var(--surface);
+  box-shadow:
+    0 2px 6px rgba(17, 24, 39, 0.3),
+    0 8px 20px rgba(31, 111, 91, 0.3);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  position: absolute;
+}
+
+.fab:hover {
+  box-shadow:
+    1px 2px 12px rgba(17, 24, 39, 0.3),
+    3px 8px 24px rgba(31, 111, 91, 0.3);
+  transform: translateY(-3px);
+}
+
+.fab:active {
+  background-color: var(--accent-active);
+  transform: translateY(-0.5px);
+}
+
+.fab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+
+
+/*
+ * MODAL styling
+ *
+ */
 .modal-shell {
   position: absolute;
   top: 0;
@@ -350,10 +369,16 @@ p {
 }
 
 .modal-btn:active {
-  background-color: color-mix(in srgb, var(--accent) 80%, black);
+  background-color: var(--accent-active);
   transform: translateY(-0.3px);
 }
 
+
+
+/*
+ * APP FORM styling
+ *
+ */
 div:has(> .app-form) {
   display: flex;
   justify-content: center;
@@ -367,4 +392,46 @@ div:has(> .app-form) {
   width: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.app-form > input[type="text"] {
+  outline: none;
+  border: none;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+  border-bottom-color: transparent;
+  border-bottom-color: var(--border);
+  margin-bottom: 20px;
+  font-size: 18px;
+  caret-color: var(--accent);
+  color: var(--text);
+  transition: border-bottom linear 200ms;
+}
+
+.app-form > input[type="text"]:focus {
+  border-bottom-color: var(--accent);
+}
+
+.app-form > input[type="submit"] {
+  border: none;
+  padding: 7.5px 0;
+  font-weight: bold;
+  color: white;
+  background-color: var(--accent);
+  border-radius: 5px;
+}
+
+.app-form > input[type="submit"]:hover {
+  cursor: pointer;
+  filter: brightness(90%);
+}
+
+.app-form > input[type="submit"]:active {
+  background-color: var(--accent-active);
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
 }

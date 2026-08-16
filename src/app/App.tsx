@@ -1,25 +1,25 @@
 import {useState} from 'react'
 import {AppShell} from '../shared/ui'
-import {APP_ROUTES, type AppRouteId} from './route-ids.ts'
+import {AppRoutes, type AppRouteId} from './route-ids.ts'
 import {RouteView} from './routes.tsx'
 import type {Account} from '../features/accounts'
 
 export default function App() {
-  const [route, setRoute] = useState<AppRouteId>('accounts')
+  const [route, setRoute] = useState<AppRouteId>(AppRoutes.TRANSACTIONS)
 
   return (
     <AppShell
       title={`${import.meta.env.VITE_APP_TITLE}`}
       nav={
         <>
-          {APP_ROUTES.map((item) => (
+          {Object.values(AppRoutes).map((item) => (
             <button
-              key={item.id}
+              key={item}
               type="button"
-              className={route === item.id ? 'nav-link active' : 'nav-link'}
-              onClick={() => setRoute(item.id)}
+              className={route === item ? 'nav-link active' : 'nav-link'}
+              onClick={() => setRoute(item)}
             >
-              {item.label}
+              {item}
             </button>
           ))}
         </>
