@@ -1,10 +1,10 @@
 import type { MouseEventHandler } from 'react'
 
-type AddButtonProps = {
+type FabProps = {
   onClick: MouseEventHandler<HTMLButtonElement>
 }
 
-export function AddButton({ onClick }: AddButtonProps) {
+export function Fab({ onClick }: FabProps) {
     return (
         <button
             type="button"

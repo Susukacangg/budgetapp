@@ -5,7 +5,7 @@ import {
     insertAccountSchema,
 } from '../model.ts'
 import {
-    AddButton,
+    Fab,
     List,
     Modal,
     Spinner
@@ -94,7 +94,7 @@ export function AccountsPage() {
                     <List items={accountsList} clickable={true}/>
                 )
             }
-            <AddButton onClick={() => setIsModalOpen(true)}
+            <Fab onClick={() => setIsModalOpen(true)}
             />
             <Modal title={"Add Account"}
                    isOpen={isModalOpen}
