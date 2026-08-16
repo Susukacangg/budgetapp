@@ -231,7 +231,7 @@ p {
  * FAB styling
  *
  */
-.add-btn {
+.fab {
   width: 3rem;
   height: 3rem;
   padding: 0;
@@ -244,23 +244,21 @@ p {
     transform 0.2s ease,
     box-shadow 0.2s ease;
   position: absolute;
-  bottom: 2rem;
-  right: 2rem;
 }
 
-.add-btn:hover {
+.fab:hover {
   box-shadow:
     1px 2px 12px rgba(17, 24, 39, 0.3),
     3px 8px 24px rgba(31, 111, 91, 0.3);
   transform: translateY(-3px);
 }
 
-.add-btn:active {
+.fab:active {
   background-color: var(--accent-active);
   transform: translateY(-0.5px);
 }
 
-.add-btn:focus-visible {
+.fab:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
