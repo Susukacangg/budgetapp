@@ -364,7 +364,7 @@ p {
   margin: 0;
 }
 
-.modal-btn {
+.modal-close-btn {
   width: 2rem;
   height: 2rem;
   background-color: var(--accent);
@@ -376,14 +376,14 @@ p {
   transition: all 0.2s ease-in;
 }
 
-.modal-btn:hover {
+.modal-close-btn:hover {
   box-shadow:
     1px 2px 4px rgba(17, 24, 39, 0.3),
     1px 6px 6px rgba(31, 111, 91, 0.3);
   transform: translateY(-2.5px);
 }
 
-.modal-btn:active {
+.modal-close-btn:active {
   background-color: var(--accent-active);
   transform: translateY(-0.3px);
 }

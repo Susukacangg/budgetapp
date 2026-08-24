@@ -83,7 +83,7 @@ export function Modal({
           <h2 className="modal-title">{title}</h2>
           <button
             type="button"
-            className="round-btn hover-btn modal-btn"
+            className="round-btn modal-close-btn"
             onClick={onClose}
           >
             ×
