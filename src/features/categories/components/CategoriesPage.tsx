@@ -1,6 +1,6 @@
 import {useState} from 'react'
 import {mockCategories} from '../../../app/fixtures/mock-data'
-import {List, Fab, Modal} from '../../../shared/ui'
+import {List, ListItem, Fab, Modal} from '../../../shared/ui'
 import {CategoriesForm} from './CategoriesForm.tsx'
 
 export function CategoriesPage() {
@@ -11,7 +11,20 @@ export function CategoriesPage() {
       <section className="page">
           <h2>Categories</h2>
           <p className="muted">Taxonomy for spend and income.</p>
-          <List clickable={false} items={mockCategories}/>
+          <List>
+              {mockCategories.map((category, index) => (
+                  <ListItem
+                      key={category.id}
+                      index={index}
+                      clickable={false}
+                  >
+                      <strong>{category.name}</strong>
+                      <span className="muted">
+                          {`${category.type}`}
+                      </span>
+                  </ListItem>
+              ))}
+          </List>
 
           <Modal title={"Add Category"}
                  isOpen={isModalOpen}
