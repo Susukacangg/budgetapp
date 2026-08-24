@@ -44,7 +44,7 @@ export function Modal({
   }, [isOpen, onClose])
 
   function getModalPositionStyle(): CSSProperties {
-    let properties: CSSProperties = {
+    const properties: CSSProperties = {
       height: '100%',
       transformOrigin: `${position} center`,
     }

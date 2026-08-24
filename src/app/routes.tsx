@@ -1,4 +1,3 @@
-import type {Account} from '../features/accounts'
 import {AccountsPage} from '../features/accounts'
 import {BudgetsPage} from '../features/budgets'
 import {CategoriesPage} from '../features/categories'

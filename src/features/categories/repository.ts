@@ -1,4 +1,3 @@
-import type { Category } from './model.ts'
 import { supabase } from '../../infrastructure/supabase'
 
 export type CategoryDao = {

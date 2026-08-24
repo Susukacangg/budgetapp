@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import type { Money } from '../../domain/money'
 import type { AccountDao } from './repository.ts'
 
 export const ACCOUNT_TYPES = ['Cash', 'Debit Card', 'Credit Card', 'E-Wallet'] as const

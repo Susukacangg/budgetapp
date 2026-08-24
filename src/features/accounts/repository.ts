@@ -1,4 +1,3 @@
-import type { Account } from './model.ts'
 import { supabase } from '../../infrastructure/supabase'
 
 export type AccountDao = {

@@ -2,7 +2,6 @@ import {useState} from 'react'
 import {AppShell} from '../shared/ui'
 import {AppRoutes, type AppRouteId} from './route-ids.ts'
 import {RouteView} from './routes.tsx'
-import type {Account} from '../features/accounts'
 
 export default function App() {
   const [route, setRoute] = useState<AppRouteId>(import.meta.env.VITE_DEFAULT_PAGE)

@@ -12,7 +12,7 @@ type FabProps = {
 export function Fab({ onClick, position='bottom-right', margins=2 }: FabProps) {
 
     function getPositionInset(position: string): CSSProperties {
-        let margin: string = `${margins}rem`
+        const margin: string = `${margins}rem`
 
         switch (position) {
             case 'top-right':

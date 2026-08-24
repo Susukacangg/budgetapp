@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import {AppForm, CurrencyInput, Spinner} from '../../../shared/ui'
+import {AppForm, Spinner} from '../../../shared/ui'
 
 export function CategoriesForm() {
     const [isLoading, setIsLoading] = useState<boolean>(false)
