@@ -1,4 +1,6 @@
 import {type ReactNode, useEffect, useRef, CSSProperties} from 'react'
+import {IconButton} from './IconButton.tsx'
+import {Cross} from '../icon'
 
 const MODAL_POSITIONS = ['right', 'left', 'center'] as const
 type ModalPosition = (typeof MODAL_POSITIONS)[number]
@@ -79,15 +81,13 @@ export function Modal({
       <div className={`modal-card ${position !== 'center' ? 'side-modal' : ''}`}
            style={getModalPositionStyle()}
       >
+        <IconButton className={"modal-close-btn"}
+                    onClick={onClose}
+        >
+          <Cross/>
+        </IconButton>
         <div className="menu-bar">
           <h2 className="modal-title">{title}</h2>
-          <button
-            type="button"
-            className="round-btn modal-close-btn"
-            onClick={onClose}
-          >
-            ×
-          </button>
         </div>
         {/*area for modal contents*/}
         {children}
