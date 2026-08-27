@@ -480,4 +480,5 @@ div:has(> .app-form) {
   z-index: 1;
   width: var(--icon-btn-size);
   height: var(--icon-btn-size);
+  transition: all 0.2s ease-out;
 }
