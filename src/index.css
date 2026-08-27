@@ -130,6 +130,8 @@ p {
   justify-content: center;
   padding: 0;
   flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
   cursor: pointer;
 }
 
@@ -459,10 +461,9 @@ div:has(> .app-form) {
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background-color: color-mix(var(--accent-active) 15%, transparent);
+  background-color: color-mix(in srgb, var(--accent-active) 15%, transparent);
   transform: scale(0);
   transition: transform 0.4s var(--bouncy-cubic-bezier);
-  z-index: -1;
 }
 
 .icon-button:hover::before,
@@ -471,10 +472,12 @@ div:has(> .app-form) {
 }
 
 .icon-button:active::before {
-  background-color: color-mix(var(--accent-active) 30%, transparent);
+  background-color: color-mix(in srgb, var(--accent-active) 30%, transparent);
 }
 
 .icon-button svg {
+  position: relative;
+  z-index: 1;
   width: var(--icon-btn-size);
   height: var(--icon-btn-size);
 }
