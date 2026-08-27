@@ -1,3 +1,6 @@
+import {CSSProperties} from 'react'
+
 export type IconProps = {
-    width: number
+    width: number,
+    style: CSSProperties
 }
