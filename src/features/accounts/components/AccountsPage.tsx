@@ -100,9 +100,11 @@ export function AccountsPage() {
                                 clickable={true}
                             >
                                 <strong>{account.name}</strong>
-                                <span className="muted">
-                                    {`${account.type} · RM${account.balance}`}
-                                </span>
+                                <div class="trailing">
+                                    <span className="muted">
+                                        {`${account.type} · RM${account.balance}`}
+                                    </span>
+                                </div>
                             </ListItem>
                         ))}
                     </List>
