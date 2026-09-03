@@ -71,6 +71,8 @@ export function AccountsPage() {
             setIsInserting(true)
             const saved = await insert(parsed.data)
             console.log('Inserted:', saved)
+            const converted = convertAccountFromDao(saved)
+            setAccountsList((prev) => [...prev, converted])
             setIsInserting(false)
             setIsModalOpen(false)
             // refresh list (state, refetch, etc.)
@@ -100,7 +102,7 @@ export function AccountsPage() {
                                 clickable={true}
                             >
                                 <strong>{account.name}</strong>
-                                <div class="trailing">
+                                <div className="trailing">
                                     <span className="muted">
                                         {`${account.type} · RM${account.balance}`}
                                     </span>
