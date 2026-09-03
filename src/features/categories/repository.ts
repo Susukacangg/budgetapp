@@ -9,7 +9,7 @@ export type CategoryDao = {
   readonly created_at: string
 }
 
-export async function insert(newAccount: CategoryDao): Promise<CategoryDao> {
+export async function insertCategory(newAccount: CategoryDao): Promise<CategoryDao> {
   const { data, error } = await supabase
       .from('category')
       .insert(newAccount)
