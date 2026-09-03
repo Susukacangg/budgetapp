@@ -47,7 +47,6 @@ export function CategoriesPage() {
         event.preventDefault()
         const form = event.currentTarget
         const fd = new FormData(form)
-        console.log(fd.get('category_parent'))
 
         const parsed = insertCategorySchema.safeParse({
             category_name: fd.get('category_name'),
@@ -65,10 +64,14 @@ export function CategoriesPage() {
             setIsInserting(true)
             const saved = await insertCategory(parsed.data)
             console.log("Inserted: ", saved)
+            const converted = convertCategoryFromDao(saved)
+            setCategoriesList((prev) => [...prev, converted])
+            setGroups(groupCategories([...categoriesList, converted]))
             setIsModalOpen(false)
-            setIsInserting(false)
         } catch (err) {
             console.log("Insert failed: ", err)
+        } finally {
+            setIsInserting(false)
         }
     }
 
