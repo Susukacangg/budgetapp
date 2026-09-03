@@ -1,30 +1,18 @@
-import type {CSSProperties} from 'react'
-import {formatMoney} from '../format'
-import type {Account} from '../../features/accounts'
-import type {Category} from '../../features/categories'
+import type {CSSProperties, ReactNode} from 'react'
 
 export type ListItemProps = {
-  item: Account | Category
   index: number,
-  clickable: boolean
+  clickable: boolean,
+  children: ReactNode
 }
 
-function isAccount(item: Account | Category): item is Account {
-  return 'balance' in item
-}
-
-export function ListItem({item, index, clickable}: ListItemProps) {
+export function ListItem({index, clickable, children}: ListItemProps) {
   return (
       <li
-          key={item.id}
           className={`list-item ${clickable ? 'clickable' : ''}`}
           style={{'--item-index': index} as CSSProperties}
       >
-        <strong>{item.name}</strong>
-        <span className="muted">
-          {item.type}
-          {isAccount(item) ? ` · RM${item.balance}` : null}
-        </span>
+        {children}
       </li>
   )
 }

@@ -8,7 +8,8 @@ import {
     Fab,
     List,
     Modal,
-    Spinner
+    Spinner,
+    ListItem
 } from '../../../shared/ui/'
 import {
     insert,
@@ -91,7 +92,22 @@ export function AccountsPage() {
                 accountsList.length === 0 ? (
                     <p className="muted">No accounts yet.</p>
                 ) : (
-                    <List items={accountsList} clickable={true}/>
+                    <List>
+                        {accountsList.map((account, index) => (
+                            <ListItem
+                                index={index}
+                                key={account.id}
+                                clickable={true}
+                            >
+                                <strong>{account.name}</strong>
+                                <div class="trailing">
+                                    <span className="muted">
+                                        {`${account.type} · RM${account.balance}`}
+                                    </span>
+                                </div>
+                            </ListItem>
+                        ))}
+                    </List>
                 )
             }
             <Fab onClick={() => setIsModalOpen(true)}

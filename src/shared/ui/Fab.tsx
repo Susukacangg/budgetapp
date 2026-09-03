@@ -1,4 +1,5 @@
 import type { MouseEventHandler, CSSProperties } from 'react'
+import {Add} from '../icon/'
 
 const FAB_POSITIONS = ['top-right', 'bottom-right', 'top-left', 'bottom-left'] as const
 type FabPosition = (typeof FAB_POSITIONS)[number]
@@ -12,7 +13,7 @@ type FabProps = {
 export function Fab({ onClick, position='bottom-right', margins=2 }: FabProps) {
 
     function getPositionInset(position: string): CSSProperties {
-        let margin: string = `${margins}rem`
+        const margin: string = `${margins}rem`
 
         switch (position) {
             case 'top-right':
@@ -47,15 +48,7 @@ export function Fab({ onClick, position='bottom-right', margins=2 }: FabProps) {
             onClick={onClick}
             style={getPositionInset(position)}
         >
-            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-                <path
-                    d="M10 4v12M4 10h12"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.75"
-                    strokeLinecap="round"
-                />
-            </svg>
+            <Add width={2.75}/>
         </button>
     )
 }

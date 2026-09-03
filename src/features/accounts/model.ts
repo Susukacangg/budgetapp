@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import type { Money } from '../../domain/money'
 import type { AccountDao } from './repository.ts'
 
 export const ACCOUNT_TYPES = ['Cash', 'Debit Card', 'Credit Card', 'E-Wallet'] as const
@@ -10,7 +9,7 @@ export type Account = {
   readonly name: string
   readonly type: AccountType
   readonly balance: number
-  readonly accountDesc?: string
+  readonly accountDesc: string | null
   readonly createdAt: string
 }
 
@@ -33,9 +32,5 @@ export const insertAccountSchema = z.object({
   account_name: z.string().trim().min(1, 'Account name is required'),
   account_type: z.enum(ACCOUNT_TYPES),
   account_balance: z.coerce.number().finite('Account balance must be a valid number'),
-  account_desc: z
-      .string()
-      .trim()
-      .optional()
-      .transform((value) => (value === '' ? undefined : value)),
+  account_desc: z.string().trim().optional(),
 })

@@ -1,23 +1,13 @@
-import type {Category} from "../../features/categories";
-import type {Account} from "../../features/accounts";
-import {ListItem} from "./ListItem.tsx";
+import {ReactNode} from 'react'
 
 type ListProps = {
-    items: readonly (Account | Category)[]
-    clickable: boolean
+    children: ReactNode
 }
 
-export function List({items, clickable}: ListProps) {
+export function List({children}: ListProps) {
     return (
         <ul className="list">
-            {items.map((item,  index) => (
-                <ListItem
-                    key={item.id}
-                    item={item}
-                    index={index}
-                    clickable={clickable}
-                />
-            ))}
+            {children}
         </ul>
     )
 }
