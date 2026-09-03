@@ -1,3 +1,7 @@
+/*
+ * ELEMENT STYLING
+ *
+ */
 :root {
   --text: #3d4450;
   --text-muted: #6b7280;
@@ -52,6 +56,42 @@ p {
   margin: 0;
 }
 
+select {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  padding: 0;
+}
+
+select,
+::picker(select) {
+  appearance: base-select;
+  border: var(--border) 1px solid;
+  border-radius: 0;
+}
+
+select::picker-icon {
+  content: "∨";
+  color: var(--accent);
+  font-size: 1.25rem;
+  font-weight: bolder;
+}
+
+option {
+  border-bottom: var(--border) 1px solid;
+}
+
+option::checkmark {
+  content: "»";
+  color: var(--accent);
+}
+
+
+
+/*
+ * SHELL STYLING
+ *
+ */
 .shell {
   min-height: 100svh;
   display: flex;
@@ -81,6 +121,18 @@ p {
   gap: 0.35rem;
 }
 
+.shell-main {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: none;
+  width: 100%;
+}
+
+
+/*
+ * NAV LINK STYLING
+ *
+ */
 .nav-link {
   appearance: none;
   border: 1px solid transparent;
@@ -104,12 +156,6 @@ p {
   font-weight: 600;
 }
 
-.shell-main {
-  flex: 1;
-  padding: 1.5rem;
-  max-width: none;
-  width: 100%;
-}
 
 .page {
   display: flex;
@@ -398,7 +444,8 @@ div:has(> .app-form) {
   flex-direction: column;
 }
 
-.app-form > input[type="text"] {
+.app-form > input[type="text"],
+.app-form > select {
   outline: none;
   border: none;
   border-bottom-width: 2px;
@@ -412,7 +459,8 @@ div:has(> .app-form) {
   transition: border-bottom linear 200ms;
 }
 
-.app-form > input[type="text"]:focus {
+.app-form > input[type="text"]:focus,
+.app-form > select:focus {
   border-bottom-color: var(--accent);
 }
 
