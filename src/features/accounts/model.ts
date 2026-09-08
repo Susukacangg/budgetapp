@@ -17,7 +17,7 @@ export function convertAccountFromDao(accountDao: AccountDao): Account {
   return {
     id: accountDao.id,
     name: accountDao.account_name,
-    type:accountDao.account_type,
+    type:accountDao.account_type as AccountType,
     balance:accountDao.account_balance,
     accountDesc:accountDao.account_desc,
     createdAt:accountDao.created_at
