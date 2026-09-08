@@ -22,6 +22,7 @@ export function RouteView({ route }: Readonly<RouteViewProps>) {
     case AppRoutes.REPORTS:
       return <ReportsPage />
     default: {
+      // @ts-expect-error Other routes that are not defined will throw an error
       const _exhaustive: never = route
       return _exhaustive
     }
