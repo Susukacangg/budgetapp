@@ -1,11 +1,17 @@
-import {useState, useEffect, FormEvent} from 'react'
-import {mockCategories} from '../../../app/fixtures/mock-data'
+import {useState, useEffect, type SyntheticEvent} from 'react'
 import {List, ListItem, Fab, Modal, IconButton, Spinner} from '../../../shared/ui'
-import {ChevronDown, ChevronUp} from '../../../shared/icon'
+import {ChevronDown} from '../../../shared/icon'
 import {CategoriesForm} from './CategoriesForm.tsx'
-import {type CategoryGroup, groupCategories, CATEGORY_TYPES, type CategoryType, insertCategorySchema} from '../model.ts'
-import {type CategoryDao, getAllCategories, insertCategory} from "../../categories/repository.ts";
-import {convertCategoryFromDao, type Category} from "../model.ts";
+import {
+    type CategoryGroup,
+    groupCategories,
+    CATEGORY_TYPES,
+    type CategoryType,
+    insertCategorySchema,
+    convertCategoryFromDao,
+    type Category
+} from '../model.ts'
+import {type CategoryDao, getAllCategories, insertCategory} from "../repository.ts";
 
 export function CategoriesPage() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
@@ -43,11 +49,10 @@ export function CategoriesPage() {
         }
     }, [])
 
-    async function addNewCategory(event: FormEvent<HTMLFormElement>) {
+    async function addNewCategory(event: SyntheticEvent<HTMLFormElement>) {
         event.preventDefault()
         const form = event.currentTarget
         const fd = new FormData(form)
-        console.log(fd.get('category_parent'))
 
         const parsed = insertCategorySchema.safeParse({
             category_name: fd.get('category_name'),
@@ -57,18 +62,22 @@ export function CategoriesPage() {
         })
 
         if (!parsed.success) {
-            console.error('Validation failed:', parsed.error.flatten().fieldErrors)
+            console.error('Validation failed:', parsed.error)
             return
         }
 
         try {
             setIsInserting(true)
-            const saved = await insertCategory(parsed.data)
+            const saved = await insertCategory(parsed.data as CategoryDao)
             console.log("Inserted: ", saved)
+            const converted = convertCategoryFromDao(saved)
+            setCategoriesList((prev) => [...prev, converted])
+            setGroups(groupCategories([...categoriesList, converted]))
             setIsModalOpen(false)
-            setIsInserting(false)
         } catch (err) {
             console.log("Insert failed: ", err)
+        } finally {
+            setIsInserting(false)
         }
     }
 
@@ -99,7 +108,7 @@ export function CategoriesPage() {
                             <b>{parent.name}</b>
                         </p>
                         <ul>
-                            {openIds.has(parent.id) && children.map((subCat, index) => (
+                            {openIds.has(parent.id) && children.map((subCat) => (
                                 <li key={subCat.id}>
                                     {subCat.name}
                                 </li>
@@ -134,14 +143,14 @@ export function CategoriesPage() {
           {!isLoading && <p className="muted">Expenses</p>}
           {!isLoading &&
               <List>
-                  {renderListByCategoryType(CATEGORY_TYPES.EXPENSE.valueOf())}
+                  {renderListByCategoryType(CATEGORY_TYPES.EXPENSE)}
               </List>
           }
 
           {!isLoading && <p className="muted">Income</p>}
           {!isLoading &&
               <List>
-                  {renderListByCategoryType(CATEGORY_TYPES.INCOME.valueOf())}
+                  {renderListByCategoryType(CATEGORY_TYPES.INCOME)}
               </List>
           }
 

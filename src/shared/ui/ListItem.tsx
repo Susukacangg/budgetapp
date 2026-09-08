@@ -6,7 +6,7 @@ export type ListItemProps = {
   children: ReactNode
 }
 
-export function ListItem({index, clickable, children}: ListItemProps) {
+export function ListItem({index, clickable, children}: Readonly<ListItemProps>) {
   return (
       <li
           className={`list-item ${clickable ? 'clickable' : ''}`}

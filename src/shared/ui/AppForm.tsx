@@ -1,11 +1,11 @@
-import {type FormEvent, type ReactNode} from 'react'
+import type {ReactNode, SyntheticEvent} from 'react'
 
 type AppFormProps = {
-    onSubmitHandler: (event: FormEvent<HTMLFormElement>) => void
+    onSubmitHandler?: (event: SyntheticEvent<HTMLFormElement>) => void
     children: ReactNode
 }
 
-export function AppForm({onSubmitHandler, children}: AppFormProps) {
+export function AppForm({onSubmitHandler, children}: Readonly<AppFormProps>) {
     return (
         <div tabIndex={-1}>
             <form className="app-form" onSubmit={onSubmitHandler}>

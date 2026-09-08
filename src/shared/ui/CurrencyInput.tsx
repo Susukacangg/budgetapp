@@ -4,7 +4,7 @@ type CurrencyInputProps = {
     name: string
 }
 
-export function CurrencyInput({name}: CurrencyInputProps) {
+export function CurrencyInput({name}: Readonly<CurrencyInputProps>) {
     const [minorUnits, setMinorUnits] = useState('0')
     const padded = minorUnits.padStart(3, '0')
     const display = `${padded.slice(0, -2)}.${padded.slice(-2)}`

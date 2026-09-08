@@ -17,7 +17,7 @@ export function convertAccountFromDao(accountDao: AccountDao): Account {
   return {
     id: accountDao.id,
     name: accountDao.account_name,
-    type:accountDao.account_type,
+    type:accountDao.account_type as AccountType,
     balance:accountDao.account_balance,
     accountDesc:accountDao.account_desc,
     createdAt:accountDao.created_at
@@ -31,6 +31,6 @@ export function convertAccountFromDao(accountDao: AccountDao): Account {
 export const insertAccountSchema = z.object({
   account_name: z.string().trim().min(1, 'Account name is required'),
   account_type: z.enum(ACCOUNT_TYPES),
-  account_balance: z.coerce.number().finite('Account balance must be a valid number'),
+  account_balance: z.coerce.number('Account balance must be a valid number'),
   account_desc: z.string().trim().optional(),
 })

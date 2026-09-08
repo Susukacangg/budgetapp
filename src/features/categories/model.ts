@@ -45,7 +45,7 @@ export function convertCategoryFromDao(categoryDao: CategoryDao): Category {
   return {
     id: categoryDao.id,
     name: categoryDao.category_name,
-    type: categoryDao.category_type,
+    type: categoryDao.category_type as CategoryType,
     parentId: categoryDao.category_parent,
     categoryDesc: categoryDao.category_desc,
     createdAt: categoryDao.created_at,

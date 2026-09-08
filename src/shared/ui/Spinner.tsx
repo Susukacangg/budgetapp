@@ -1,8 +1,10 @@
+import type {CSSProperties} from "react";
+
 type SpinnerProps = {
-    size: number,
-    borderWidth: number,
-    colorString: string,
-    style: CSSStyleProperties,
+    size?: number,
+    borderWidth?: number,
+    colorString?: string,
+    style?: CSSProperties,
 }
 
 export function Spinner(
@@ -11,7 +13,7 @@ export function Spinner(
         borderWidth=6,
         colorString = 'var(--accent)',
         style
-    }: SpinnerProps) {
+    }: Readonly<SpinnerProps>) {
     return (
         <div
             style={{

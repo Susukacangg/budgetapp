@@ -1,4 +1,4 @@
-import {type FormEvent, useState, useEffect} from 'react'
+import {type SyntheticEvent, useState, useEffect} from 'react'
 import {
     type Account,
     convertAccountFromDao,
@@ -50,7 +50,7 @@ export function AccountsPage() {
         }
     }, [])
 
-    async function addNewAccount(event: FormEvent<HTMLFormElement>) {
+    async function addNewAccount(event: SyntheticEvent<HTMLFormElement>) {
         event.preventDefault()
         const form = event.currentTarget
         const fd = new FormData(form)
@@ -63,14 +63,16 @@ export function AccountsPage() {
         })
 
         if (!parsed.success) {
-            console.error('Validation failed:', parsed.error.flatten().fieldErrors)
+            console.error('Validation failed:', parsed.error)
             return
         }
 
         try {
             setIsInserting(true)
-            const saved = await insert(parsed.data)
+            const saved = await insert(parsed.data as AccountDao)
             console.log('Inserted:', saved)
+            const converted = convertAccountFromDao(saved)
+            setAccountsList((prev) => [...prev, converted])
             setIsInserting(false)
             setIsModalOpen(false)
             // refresh list (state, refetch, etc.)
@@ -79,36 +81,40 @@ export function AccountsPage() {
         }
     }
 
+    function renderAccountsList() {
+        return accountsList.length === 0 ? (
+            <p className="muted">No accounts yet.</p>
+        ) : (
+            <List>
+                {accountsList.map((account, index) => (
+                    <ListItem
+                        index={index}
+                        key={account.id}
+                        clickable={true}
+                    >
+                        <strong>{account.name}</strong>
+                        <div className="trailing">
+                                    <span className="muted">
+                                        {`${account.type} · RM${account.balance}`}
+                                    </span>
+                        </div>
+                    </ListItem>
+                ))}
+            </List>
+        )
+    }
+
     return (
         <section className="page">
             <h2>Accounts</h2>
             <p className="muted">Cash, bank, credit, and savings accounts.</p>
             {
-                isLoading ? (<Spinner style={{
-                    alignSelf: 'center',
-                    marginTop: '50px'
-                }}/>)
-                :
-                accountsList.length === 0 ? (
-                    <p className="muted">No accounts yet.</p>
-                ) : (
-                    <List>
-                        {accountsList.map((account, index) => (
-                            <ListItem
-                                index={index}
-                                key={account.id}
-                                clickable={true}
-                            >
-                                <strong>{account.name}</strong>
-                                <div class="trailing">
-                                    <span className="muted">
-                                        {`${account.type} · RM${account.balance}`}
-                                    </span>
-                                </div>
-                            </ListItem>
-                        ))}
-                    </List>
-                )
+                isLoading ? (
+                    <Spinner style={{
+                        alignSelf: 'center',
+                        marginTop: '50px'
+                    }}/>
+                ) : renderAccountsList()
             }
             <Fab onClick={() => setIsModalOpen(true)}
             />

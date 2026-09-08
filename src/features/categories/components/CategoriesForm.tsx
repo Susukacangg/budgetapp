@@ -1,14 +1,14 @@
-import {useState, useMemo, FormEvent} from 'react'
+import {useState, useMemo, type SyntheticEvent} from 'react'
 import {AppForm, Spinner} from '../../../shared/ui'
 import {type Category, CATEGORY_TYPES, type CategoryType} from '../model.ts'
 
 type CategoriesFormProps = {
-    onSubmitHandler?: (event: FormEvent<HTMLFormElement>) => void,
+    onSubmitHandler?: (event: SyntheticEvent<HTMLFormElement>) => void,
     isLoading?: boolean,
     availableCategories: Category[] | null
 }
 
-export function CategoriesForm({onSubmitHandler, isLoading, availableCategories}: CategoriesFormProps) {
+export function CategoriesForm({onSubmitHandler, isLoading, availableCategories}: Readonly<CategoriesFormProps>) {
     const categoryTypes = Object.values(CATEGORY_TYPES)
     const [selectedCategoryType, setSelectedCategoryType] = useState<CategoryType>(categoryTypes[0])
 
@@ -17,11 +17,6 @@ export function CategoriesForm({onSubmitHandler, isLoading, availableCategories}
             category.type == selectedCategoryType &&
             category.parentId == null
         )) ?? [], [availableCategories, selectedCategoryType])
-
-    function onCategoryTypeChange(categoryType: CategoryType) {
-        console.log(categoryType)
-        setSelectedCategoryType(categoryType.valueOf())
-    }
 
     return (
         <AppForm onSubmitHandler={onSubmitHandler}>

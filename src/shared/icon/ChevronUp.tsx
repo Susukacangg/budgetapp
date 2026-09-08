@@ -1,6 +1,6 @@
 import {type IconProps} from './model.ts'
 
-export function ChevronUp({width=2}: IconProps) {
+export function ChevronUp({width=2}: Readonly<IconProps>) {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" aria-hidden="true">
             <path

@@ -9,7 +9,7 @@ type RouteViewProps = {
   route: AppRouteId
 }
 
-export function RouteView({ route }: RouteViewProps) {
+export function RouteView({ route }: Readonly<RouteViewProps>) {
   switch (route) {
     case AppRoutes.ACCOUNTS:
       return <AccountsPage />
@@ -22,6 +22,7 @@ export function RouteView({ route }: RouteViewProps) {
     case AppRoutes.REPORTS:
       return <ReportsPage />
     default: {
+      // @ts-expect-error Other routes that are not defined will throw an error
       const _exhaustive: never = route
       return _exhaustive
     }

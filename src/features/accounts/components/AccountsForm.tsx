@@ -1,12 +1,12 @@
-import {type FormEvent} from 'react'
+import {type SyntheticEvent} from 'react'
 import {AppForm, CurrencyInput, Spinner} from '../../../shared/ui/'
 
 type AccountsFormProps = {
-    onSubmitHandler: (event: FormEvent<HTMLFormElement>) => void
+    onSubmitHandler: (event: SyntheticEvent<HTMLFormElement>) => void
     isLoading: boolean
 }
 
-export function AccountsForm({onSubmitHandler, isLoading}: AccountsFormProps) {
+export function AccountsForm({onSubmitHandler, isLoading}: Readonly<AccountsFormProps>) {
     return (
         <AppForm onSubmitHandler={onSubmitHandler}>
             <label htmlFor="account_name">

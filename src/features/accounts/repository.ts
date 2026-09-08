@@ -5,7 +5,7 @@ export type AccountDao = {
   readonly account_name: string
   readonly account_type: string
   readonly account_balance: number
-  readonly account_desc?: string
+  readonly account_desc: string | null
   readonly created_at: string
 }
 
