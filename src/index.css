@@ -295,7 +295,7 @@ option::checkmark {
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
-  position: absolute;
+  position: fixed;
 }
 
 .fab:hover {
@@ -450,7 +450,6 @@ div:has(> .app-form) {
   border: none;
   border-bottom-width: 2px;
   border-bottom-style: solid;
-  border-bottom-color: transparent;
   border-bottom-color: var(--border);
   margin-bottom: 20px;
   font-size: 18px;
