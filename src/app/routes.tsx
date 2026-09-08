@@ -9,7 +9,7 @@ type RouteViewProps = {
   route: AppRouteId
 }
 
-export function RouteView({ route }: RouteViewProps) {
+export function RouteView({ route }: Readonly<RouteViewProps>) {
   switch (route) {
     case AppRoutes.ACCOUNTS:
       return <AccountsPage />

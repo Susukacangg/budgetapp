@@ -8,7 +8,7 @@ type CategoriesFormProps = {
     availableCategories: Category[] | null
 }
 
-export function CategoriesForm({onSubmitHandler, isLoading, availableCategories}: CategoriesFormProps) {
+export function CategoriesForm({onSubmitHandler, isLoading, availableCategories}: Readonly<CategoriesFormProps>) {
     const categoryTypes = Object.values(CATEGORY_TYPES)
     const [selectedCategoryType, setSelectedCategoryType] = useState<CategoryType>(categoryTypes[0])
 

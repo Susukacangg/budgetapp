@@ -63,7 +63,7 @@ export function AccountsPage() {
         })
 
         if (!parsed.success) {
-            console.error('Validation failed:', parsed.error.flatten().fieldErrors)
+            console.error('Validation failed:', parsed.error)
             return
         }
 
@@ -81,36 +81,40 @@ export function AccountsPage() {
         }
     }
 
+    function renderAccountsList() {
+        return accountsList.length === 0 ? (
+            <p className="muted">No accounts yet.</p>
+        ) : (
+            <List>
+                {accountsList.map((account, index) => (
+                    <ListItem
+                        index={index}
+                        key={account.id}
+                        clickable={true}
+                    >
+                        <strong>{account.name}</strong>
+                        <div className="trailing">
+                                    <span className="muted">
+                                        {`${account.type} · RM${account.balance}`}
+                                    </span>
+                        </div>
+                    </ListItem>
+                ))}
+            </List>
+        )
+    }
+
     return (
         <section className="page">
             <h2>Accounts</h2>
             <p className="muted">Cash, bank, credit, and savings accounts.</p>
             {
-                isLoading ? (<Spinner style={{
-                    alignSelf: 'center',
-                    marginTop: '50px'
-                }}/>)
-                :
-                accountsList.length === 0 ? (
-                    <p className="muted">No accounts yet.</p>
-                ) : (
-                    <List>
-                        {accountsList.map((account, index) => (
-                            <ListItem
-                                index={index}
-                                key={account.id}
-                                clickable={true}
-                            >
-                                <strong>{account.name}</strong>
-                                <div className="trailing">
-                                    <span className="muted">
-                                        {`${account.type} · RM${account.balance}`}
-                                    </span>
-                                </div>
-                            </ListItem>
-                        ))}
-                    </List>
-                )
+                isLoading ? (
+                    <Spinner style={{
+                        alignSelf: 'center',
+                        marginTop: '50px'
+                    }}/>
+                ) : renderAccountsList()
             }
             <Fab onClick={() => setIsModalOpen(true)}
             />

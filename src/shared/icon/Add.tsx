@@ -1,6 +1,6 @@
 import {type IconProps} from './model.ts'
 
-export function Add({width=2}: IconProps) {
+export function Add({width=2}: Readonly<IconProps>) {
     return (
         <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
             <path

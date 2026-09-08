@@ -5,7 +5,7 @@ type AppFormProps = {
     children: ReactNode
 }
 
-export function AppForm({onSubmitHandler, children}: AppFormProps) {
+export function AppForm({onSubmitHandler, children}: Readonly<AppFormProps>) {
     return (
         <div tabIndex={-1}>
             <form className="app-form" onSubmit={onSubmitHandler}>

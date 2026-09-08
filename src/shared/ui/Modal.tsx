@@ -20,7 +20,7 @@ export function Modal({
       onClose,
       position='center',
       children
-    }: ModalProps) {
+    }: Readonly<ModalProps>) {
   const shellRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {

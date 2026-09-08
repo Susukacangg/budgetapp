@@ -11,7 +11,7 @@ type FabProps = {
   margin?: number
 }
 
-export function Fab({ onClick, position='bottom-right', margin=2 }: FabProps) {
+export function Fab({ onClick, position='bottom-right', margin=2 }: Readonly<FabProps>) {
 
     function getPositionInset(position: string): CSSProperties {
         const margins: string = `${margin}rem`

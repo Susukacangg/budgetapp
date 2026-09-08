@@ -13,7 +13,7 @@ export function Spinner(
         borderWidth=6,
         colorString = 'var(--accent)',
         style
-    }: SpinnerProps) {
+    }: Readonly<SpinnerProps>) {
     return (
         <div
             style={{

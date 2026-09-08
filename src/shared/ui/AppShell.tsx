@@ -6,7 +6,7 @@ type AppShellProps = {
   children: ReactNode
 }
 
-export function AppShell({ title, nav, children }: AppShellProps) {
+export function AppShell({ title, nav, children }: Readonly<AppShellProps>) {
   return (
     <div className="shell">
       <header className="shell-header">

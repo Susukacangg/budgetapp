@@ -2,9 +2,16 @@ import {useState, useEffect, type SyntheticEvent} from 'react'
 import {List, ListItem, Fab, Modal, IconButton, Spinner} from '../../../shared/ui'
 import {ChevronDown} from '../../../shared/icon'
 import {CategoriesForm} from './CategoriesForm.tsx'
-import {type CategoryGroup, groupCategories, CATEGORY_TYPES, type CategoryType, insertCategorySchema} from '../model.ts'
+import {
+    type CategoryGroup,
+    groupCategories,
+    CATEGORY_TYPES,
+    type CategoryType,
+    insertCategorySchema,
+    convertCategoryFromDao,
+    type Category
+} from '../model.ts'
 import {type CategoryDao, getAllCategories, insertCategory} from "../repository.ts";
-import {convertCategoryFromDao, type Category} from "../model.ts";
 
 export function CategoriesPage() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
@@ -55,7 +62,7 @@ export function CategoriesPage() {
         })
 
         if (!parsed.success) {
-            console.error('Validation failed:', parsed.error.flatten().fieldErrors)
+            console.error('Validation failed:', parsed.error)
             return
         }
 
