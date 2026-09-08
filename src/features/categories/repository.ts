@@ -5,7 +5,7 @@ export type CategoryDao = {
   readonly category_name: string
   readonly category_type: string
   readonly category_parent: number
-  readonly category_desc?: string
+  readonly category_desc: string | null
   readonly created_at: string
 }
 

@@ -1,7 +1,8 @@
-import {type ReactNode, useEffect, useRef, CSSProperties} from 'react'
+import {type ReactNode, useEffect, useRef, type CSSProperties} from 'react'
 import {IconButton} from './IconButton.tsx'
 import {Cross} from '../icon'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const MODAL_POSITIONS = ['right', 'left', 'center'] as const
 type ModalPosition = (typeof MODAL_POSITIONS)[number]
 
@@ -9,7 +10,7 @@ type ModalProps = {
   title?: string
   isOpen: boolean
   onClose: () => void
-  position: ModalPosition
+  position?: ModalPosition
   children: ReactNode
 }
 

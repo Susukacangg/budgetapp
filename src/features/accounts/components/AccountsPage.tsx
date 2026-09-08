@@ -1,4 +1,4 @@
-import {type FormEvent, useState, useEffect} from 'react'
+import {type SyntheticEvent, useState, useEffect} from 'react'
 import {
     type Account,
     convertAccountFromDao,
@@ -50,7 +50,7 @@ export function AccountsPage() {
         }
     }, [])
 
-    async function addNewAccount(event: FormEvent<HTMLFormElement>) {
+    async function addNewAccount(event: SyntheticEvent<HTMLFormElement>) {
         event.preventDefault()
         const form = event.currentTarget
         const fd = new FormData(form)
@@ -69,7 +69,7 @@ export function AccountsPage() {
 
         try {
             setIsInserting(true)
-            const saved = await insert(parsed.data)
+            const saved = await insert(parsed.data as AccountDao)
             console.log('Inserted:', saved)
             const converted = convertAccountFromDao(saved)
             setAccountsList((prev) => [...prev, converted])

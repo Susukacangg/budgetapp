@@ -1,7 +1,7 @@
-import {type FormEvent, type ReactNode} from 'react'
+import type {ReactNode, SyntheticEvent} from 'react'
 
 type AppFormProps = {
-    onSubmitHandler: (event: FormEvent<HTMLFormElement>) => void
+    onSubmitHandler?: (event: SyntheticEvent<HTMLFormElement>) => void
     children: ReactNode
 }
 
