@@ -5,9 +5,11 @@ export type ListItemProps = {
     clickable?: boolean,
     children?: ReactNode,
     style?: CSSProperties,
+    onClick?: () => void
 }
 
-export function ListItem({index=0, clickable=true, children, style}: Readonly<ListItemProps>) {
+export function ListItem(
+    {index=0, clickable=true, children, style, onClick}: Readonly<ListItemProps>) {
   return (
       <li
           className={`list-item ${clickable ? 'clickable' : ''}`}
@@ -15,6 +17,7 @@ export function ListItem({index=0, clickable=true, children, style}: Readonly<Li
               '--item-index': index,
               ...style
           } as CSSProperties}
+          onClick={onClick}
       >
         {children}
       </li>
