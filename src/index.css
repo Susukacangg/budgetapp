@@ -201,7 +201,7 @@ option::checkmark {
   --item-index: 0;
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   padding: 0.9rem 1.1rem;
   border: 1px solid var(--border);

@@ -98,6 +98,9 @@ export function CategoriesPage() {
                     key={parent.id}
                     index={index}
                     clickable={false}
+                    style={{
+                        alignItems: openIds.has(parent.id) ? 'baseline' : 'center',
+                    }}
                 >
                     <div className={"sub-list"}>
                         <p
@@ -116,19 +119,26 @@ export function CategoriesPage() {
                         </ul>
                     </div>
                     <div className="trailing">
-                        <span className="muted">{`${parent.type}`}</span>
-                        <IconButton
-                            onClick={() => openListItem(parent.id)}
-                        >
-                            <ChevronDown
-                                style={{
-                                    transform: openIds.has(parent.id) ? 'rotate(180deg)' : 'rotate(0deg)'
-                                }}
-                            />
-                        </IconButton>
+                        {renderCategoryDropdownButton(parent.id,  children.length > 0)}
                     </div>
                 </ListItem>
             ))
+    }
+
+    function renderCategoryDropdownButton(parentId: number, hasChildren: boolean) {
+        if (hasChildren) {
+            return (
+                <IconButton
+                    onClick={() => openListItem(parentId)}
+                >
+                    <ChevronDown
+                        style={{
+                            transform: openIds.has(parentId) ? 'rotate(180deg)' : 'rotate(0deg)'
+                        }}
+                    />
+                </IconButton>
+            )
+        }
     }
 
     return (
