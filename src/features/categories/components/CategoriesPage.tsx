@@ -1,5 +1,5 @@
 import {useState, useEffect, type SyntheticEvent} from 'react'
-import {List, ListItem, Fab, Modal, IconButton, Spinner} from '../../../shared/ui'
+import {List, ListItem, Fab, Modal, Spinner} from '../../../shared/ui'
 import {ChevronDown} from '../../../shared/icon'
 import {CategoriesForm} from './CategoriesForm.tsx'
 import {
@@ -97,7 +97,8 @@ export function CategoriesPage() {
                 <ListItem
                     key={parent.id}
                     index={index}
-                    clickable={false}
+                    clickable={hasSubCat(children)}
+                    onClick={hasSubCat(children) ? () => openListItem(parent.id) : undefined}
                     style={{
                         alignItems: openIds.has(parent.id) ? 'baseline' : 'center',
                     }}
@@ -119,7 +120,7 @@ export function CategoriesPage() {
                         </ul>
                     </div>
                     <div className="trailing">
-                        {renderCategoryDropdownButton(parent.id,  children.length > 0)}
+                        {renderCategoryDropdownButton(parent.id, hasSubCat(children))}
                     </div>
                 </ListItem>
             ))
@@ -128,17 +129,21 @@ export function CategoriesPage() {
     function renderCategoryDropdownButton(parentId: number, hasChildren: boolean) {
         if (hasChildren) {
             return (
-                <IconButton
-                    onClick={() => openListItem(parentId)}
-                >
-                    <ChevronDown
-                        style={{
-                            transform: openIds.has(parentId) ? 'rotate(180deg)' : 'rotate(0deg)'
-                        }}
-                    />
-                </IconButton>
+                <ChevronDown
+                    style={{
+                        transform: openIds.has(parentId) ? 'rotate(180deg)' : 'rotate(0deg)',
+                        width: '1.6rem',
+                        height: '1.6rem',
+                        color: 'var(--accent)',
+                        transition: 'transform 0.2s linear',
+                    }}
+                />
             )
         }
+    }
+
+    function hasSubCat(children: Category[]) {
+        return children.length > 0
     }
 
     return (
