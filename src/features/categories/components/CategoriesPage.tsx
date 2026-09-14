@@ -110,7 +110,7 @@ export function CategoriesPage() {
                 <ListItem
                     index={index}
                     clickable={hasSubCat(children)}
-                    onClick={hasSubCat(children) ? () => openListItem(parent.id) : undefined}
+                    onClick={() => openListItem(parent.id)}
                 >
                     <p>
                         <b>{parent.name}</b>

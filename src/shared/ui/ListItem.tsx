@@ -17,7 +17,7 @@ export function ListItem(
               '--item-index': index,
               ...style
           } as CSSProperties}
-          onClick={onClick}
+          onClick={clickable ? onClick : undefined}
       >
         {children}
       </div>
