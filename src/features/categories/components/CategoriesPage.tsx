@@ -90,9 +90,7 @@ export function CategoriesPage() {
     }
 
     function renderListByCategoryType() {
-        return groups.length === 0 ? (
-            <p className="muted">No categories yet.</p>
-        ) : Object.values(CATEGORY_TYPES)
+        return Object.values(CATEGORY_TYPES)
             .map((categoryType) => (
                 <List key={categoryType}>
                     <p className={"muted"}>{categoryType}</p>

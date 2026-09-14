@@ -83,10 +83,7 @@ export function AccountsPage() {
     }
 
     function renderAccountsList() {
-        return accountsList.length === 0 ? (
-            <p className="muted">No accounts yet.</p>
-        ) : (
-            ACCOUNT_TYPES.map((accountType, index) => (
+        return ACCOUNT_TYPES.map((accountType, index) => (
                 <Fragment key={index}>
                     <p className="muted">{accountType}</p>
                     <List>
@@ -109,7 +106,6 @@ export function AccountsPage() {
                     </List>
                 </Fragment>
             ))
-        )
     }
 
     function closeModal() {
