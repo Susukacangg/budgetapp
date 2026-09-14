@@ -1,4 +1,4 @@
-import {useState, useEffect, type SyntheticEvent} from 'react'
+import {useState, useEffect, Fragment, type SyntheticEvent} from 'react'
 import {List, ListItem, Fab, Modal, Spinner} from '../../../shared/ui'
 import {ChevronDown} from '../../../shared/icon'
 import {CategoriesForm} from './CategoriesForm.tsx'
@@ -6,7 +6,6 @@ import {
     type CategoryGroup,
     groupCategories,
     CATEGORY_TYPES,
-    type CategoryType,
     insertCategorySchema,
     convertCategoryFromDao,
     type Category
@@ -90,40 +89,54 @@ export function CategoriesPage() {
         })
     }
 
-    function renderListByCategoryType(categoryType: CategoryType) {
-        return groups
-            .filter((group) => group.parent.type == categoryType)
-            .map(({parent, children}, index) => (
+    function renderListByCategoryType() {
+        return Object.values(CATEGORY_TYPES)
+            .map((categoryType) => (
+                <List key={categoryType}>
+                    <p className={"muted"}>{categoryType}</p>
+                    {groups
+                        .filter((group) => group.parent.type == categoryType)
+                        .map((categoryGroup, index) => (
+                            renderCategoryListItem(categoryGroup, index)
+                        ))
+                    }
+                </List>
+            ))
+    }
+
+    function renderCategoryListItem({parent, children}: CategoryGroup, index: number) {
+        return (
+            <Fragment key={parent.id}>
                 <ListItem
-                    key={parent.id}
                     index={index}
                     clickable={hasSubCat(children)}
                     onClick={hasSubCat(children) ? () => openListItem(parent.id) : undefined}
-                    style={{
-                        alignItems: openIds.has(parent.id) ? 'baseline' : 'center',
-                    }}
                 >
-                    <div className={"sub-list"}>
-                        <p
-                            style={{
-                                marginBottom: (openIds.has(parent.id)) ? '1.5rem' : ''
-                            }}
-                        >
-                            <b>{parent.name}</b>
-                        </p>
-                        <ul>
-                            {openIds.has(parent.id) && children.map((subCat) => (
-                                <li key={subCat.id}>
-                                    {subCat.name}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    <p>
+                        <b>{parent.name}</b>
+                    </p>
                     <div className="trailing">
                         {renderCategoryDropdownButton(parent.id, hasSubCat(children))}
                     </div>
                 </ListItem>
-            ))
+                <List
+                    className={"subgroup-dropdown-shell"}
+                    style={{
+                        margin: openIds.has(parent.id) ? 'var(--subgroup-dropdown-shell-margin)' : 0,
+                        padding: openIds.has(parent.id) ? 'var(--subgroup-dropdown-shell-padding)' : 0,
+                    }}
+                >
+                    {openIds.has(parent.id) && children.map((subCat, index) => (
+                        <ListItem
+                            index={index}
+                            key={subCat.id}
+                        >
+                            {subCat.name}
+                        </ListItem>
+                    ))}
+                </List>
+            </Fragment>
+        )
     }
 
     function renderCategoryDropdownButton(parentId: number, hasChildren: boolean) {
@@ -155,20 +168,7 @@ export function CategoriesPage() {
               marginTop: '50px'
           }}/>}
 
-          {!isLoading && <p className="muted">Expenses</p>}
-          {!isLoading &&
-              <List>
-                  {renderListByCategoryType(CATEGORY_TYPES.EXPENSE)}
-              </List>
-          }
-
-          {!isLoading && <p className="muted">Income</p>}
-          {!isLoading &&
-              <List>
-                  {renderListByCategoryType(CATEGORY_TYPES.INCOME)}
-              </List>
-          }
-
+          {!isLoading && renderListByCategoryType()}
 
           <Modal title={"Add Category"}
                  isOpen={isModalOpen}
