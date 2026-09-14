@@ -1,6 +1,6 @@
-import {type SyntheticEvent, useState, useEffect} from 'react'
+import {type SyntheticEvent, useState, useEffect, Fragment} from 'react'
 import {
-    type Account,
+    type Account, ACCOUNT_TYPES,
     convertAccountFromDao,
     insertAccountSchema,
 } from '../model.ts'
@@ -85,29 +85,35 @@ export function AccountsPage() {
         return accountsList.length === 0 ? (
             <p className="muted">No accounts yet.</p>
         ) : (
-            <List>
-                {accountsList.map((account, index) => (
-                    <ListItem
-                        index={index}
-                        key={account.id}
-                        clickable={true}
-                    >
-                        <strong>{account.name}</strong>
-                        <div className="trailing">
-                                    <span className="muted">
-                                        {`${account.type} · RM${account.balance}`}
-                                    </span>
-                        </div>
-                    </ListItem>
-                ))}
-            </List>
+            ACCOUNT_TYPES.map((accountType, index) => (
+                <Fragment key={index}>
+                    <p className="muted">{accountType}</p>
+                    <List>
+                        {accountsList
+                            .filter((account) => accountType == account.type)
+                            .map((account, index) => (
+                            <ListItem
+                                index={index}
+                                key={account.id}
+                                clickable={true}
+                            >
+                                <strong>{account.name}</strong>
+                                <div className="trailing">
+                                            <span className="muted">
+                                                {`${account.type} · RM${account.balance}`}
+                                            </span>
+                                </div>
+                            </ListItem>
+                        ))}
+                    </List>
+                </Fragment>
+            ))
         )
     }
 
     return (
         <section className="page">
             <h2>Accounts</h2>
-            <p className="muted">Cash, bank, credit, and savings accounts.</p>
             {
                 isLoading ? (
                     <Spinner style={{
