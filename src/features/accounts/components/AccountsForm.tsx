@@ -1,5 +1,6 @@
 import {type SyntheticEvent} from 'react'
 import {AppForm, CurrencyInput, Spinner} from '../../../shared/ui/'
+import {ACCOUNT_TYPES} from "../model.ts";
 
 type AccountsFormProps = {
     onSubmitHandler: (event: SyntheticEvent<HTMLFormElement>) => void
@@ -22,7 +23,21 @@ export function AccountsForm({onSubmitHandler, isLoading}: Readonly<AccountsForm
             <label htmlFor="account_type">
                 Account Type
             </label>
-            <input type="text" name="account_type"/>
+            <select
+                name="account_type"
+                id="account_type"
+            >
+                {Object.values(ACCOUNT_TYPES)
+                    .map((accountType) => (
+                        <option
+                            key={accountType}
+                            value={accountType}
+                        >
+                            {accountType}
+                        </option>
+                    ))
+                }
+            </select>
 
             <label htmlFor="account_desc">
                 Description
