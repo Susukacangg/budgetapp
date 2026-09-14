@@ -37,8 +37,6 @@ export function Modal({
 
     document.addEventListener('keydown', onKeyDown)
     const previousOverflow = document.body.style.overflow
-    // cannot scroll in bg
-    document.body.style.overflow = 'hidden'
 
     return () => {
       document.removeEventListener('keydown', onKeyDown)
