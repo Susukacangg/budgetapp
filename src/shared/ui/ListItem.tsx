@@ -11,7 +11,7 @@ export type ListItemProps = {
 export function ListItem(
     {index=0, clickable=true, children, style, onClick}: Readonly<ListItemProps>) {
   return (
-      <li
+      <div
           className={`list-item ${clickable ? 'clickable' : ''}`}
           style={{
               '--item-index': index,
@@ -20,6 +20,6 @@ export function ListItem(
           onClick={onClick}
       >
         {children}
-      </li>
+      </div>
   )
 }

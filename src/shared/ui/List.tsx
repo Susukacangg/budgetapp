@@ -1,13 +1,18 @@
-import {type ReactNode} from 'react'
+import type {ReactNode, CSSProperties} from 'react'
 
 type ListProps = {
-    children: ReactNode
+    children: ReactNode,
+    className?: string,
+    style?: CSSProperties,
 }
 
-export function List({children}: Readonly<ListProps>) {
+export function List({children, className, style}: Readonly<ListProps>) {
     return (
-        <ul className="list">
+        <div
+            className={`list ${className}`}
+            style={{...style}}
+        >
             {children}
-        </ul>
+        </div>
     )
 }
