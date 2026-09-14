@@ -17,6 +17,7 @@ import {
     type AccountDao
 } from "../repository.ts"
 import {AccountsForm} from "./AccountsForm.tsx";
+import {minorUnitsToCurrencyDisplay} from "../../../domain/money";
 
 export function AccountsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -58,7 +59,7 @@ export function AccountsPage() {
         const parsed = insertAccountSchema.safeParse({
             account_name: fd.get('account_name'),
             account_type: fd.get('account_type'),
-            account_balance: fd.get('account_balance'),
+            account_balance: fd.get('account_balance_submit'),
             account_desc: fd.get('account_desc') || undefined,
         })
 
@@ -74,7 +75,7 @@ export function AccountsPage() {
             const converted = convertAccountFromDao(saved)
             setAccountsList((prev) => [...prev, converted])
             setIsInserting(false)
-            setIsModalOpen(false)
+            closeModal()
             // refresh list (state, refetch, etc.)
         } catch (err) {
             console.error('Insert failed:', err)
@@ -99,9 +100,9 @@ export function AccountsPage() {
                             >
                                 <strong>{account.name}</strong>
                                 <div className="trailing">
-                                            <span className="muted">
-                                                {`${account.type} · RM${account.balance}`}
-                                            </span>
+                                    <span className="muted">
+                                        {minorUnitsToCurrencyDisplay(account.balance)}
+                                    </span>
                                 </div>
                             </ListItem>
                         ))}
@@ -109,6 +110,11 @@ export function AccountsPage() {
                 </Fragment>
             ))
         )
+    }
+
+    function closeModal() {
+        setIsModalOpen(false)
+        setFormKey((prev) => prev + 1)
     }
 
     return (
@@ -126,10 +132,7 @@ export function AccountsPage() {
             />
             <Modal title={"Add Account"}
                    isOpen={isModalOpen}
-                   onClose={() => {
-                       setIsModalOpen(false)
-                       setFormKey((prev) => prev + 1)
-                   }}
+                   onClose={closeModal}
             >
                 <AccountsForm key={formKey}
                               onSubmitHandler={addNewAccount}
