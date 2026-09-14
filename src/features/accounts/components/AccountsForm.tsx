@@ -14,17 +14,17 @@ export function AccountsForm({onSubmitHandler, isLoading}: Readonly<AccountsForm
             </label>
             <input type="text" name="account_name"/>
 
-            <label htmlFor="account_name">
+            <label htmlFor="account_balance">
                 Account Balance
             </label>
             <CurrencyInput name={"account_balance"}/>
 
-            <label htmlFor="account_name">
+            <label htmlFor="account_type">
                 Account Type
             </label>
             <input type="text" name="account_type"/>
 
-            <label htmlFor="account_name">
+            <label htmlFor="account_desc">
                 Description
             </label>
             <input type="text" name="account_desc"/>
