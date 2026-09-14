@@ -28,14 +28,21 @@ export function CurrencyInput({name}: Readonly<CurrencyInputProps>) {
     }
 
     return (
-        <input
-            type="text"
-            name={name}
-            inputMode="numeric"
-            autoComplete="off"
-            value={display}
-            onKeyDown={onKeyDown}
-            onChange={() => {}}
-        />
+        <>
+            <input
+                type="text"
+                name={name}
+                inputMode="numeric"
+                autoComplete="off"
+                value={display}
+                onKeyDown={onKeyDown}
+                onChange={() => {}}
+            />
+            <input
+                type="hidden"
+                name={`${name}_submit`}
+                value={minorUnits}
+            />
+        </>
     )
 }
