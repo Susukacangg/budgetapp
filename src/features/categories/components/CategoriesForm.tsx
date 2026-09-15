@@ -23,7 +23,7 @@ export function CategoriesForm({onSubmitHandler, isLoading, availableCategories}
             <label htmlFor="category_name">
                 Category Name
             </label>
-            <input type="text" name="category_name"/>
+            <input type="text" name="category_name" autoComplete="off"/>
 
             <label htmlFor="category_type">
                 Category Type
@@ -65,7 +65,7 @@ export function CategoriesForm({onSubmitHandler, isLoading, availableCategories}
             <label htmlFor="category_desc">
                 Description
             </label>
-            <input type="text" name="category_desc"/>
+            <input type="text" name="category_desc" autoComplete="off"/>
 
             {isLoading ?
                 <Spinner size={2}

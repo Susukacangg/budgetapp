@@ -13,7 +13,7 @@ export function AccountsForm({onSubmitHandler, isLoading}: Readonly<AccountsForm
             <label htmlFor="account_name">
                 Account Name
             </label>
-            <input type="text" name="account_name"/>
+            <input type="text" name="account_name" autoComplete="off"/>
 
             <label htmlFor="account_balance">
                 Account Balance
@@ -42,7 +42,7 @@ export function AccountsForm({onSubmitHandler, isLoading}: Readonly<AccountsForm
             <label htmlFor="account_desc">
                 Description
             </label>
-            <input type="text" name="account_desc"/>
+            <input type="text" name="account_desc" autoComplete="off"/>
 
             {isLoading ?
                 <Spinner size={2}
