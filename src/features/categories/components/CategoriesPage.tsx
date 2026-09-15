@@ -72,7 +72,7 @@ export function CategoriesPage() {
             const converted = convertCategoryFromDao(saved)
             setCategoriesList((prev) => [...prev, converted])
             setGroups(groupCategories([...categoriesList, converted]))
-            setIsModalOpen(false)
+            closeModal()
         } catch (err) {
             console.log("Insert failed: ", err)
         } finally {
@@ -159,6 +159,11 @@ export function CategoriesPage() {
         return children.length > 0
     }
 
+    function closeModal() {
+        setIsModalOpen(false)
+        setFormKey((prev) => prev + 1)
+    }
+
     return (
       <section className="page">
           <h2>Categories</h2>
@@ -172,10 +177,7 @@ export function CategoriesPage() {
 
           <Modal title={"Add Category"}
                  isOpen={isModalOpen}
-                 onClose={() => {
-                     setIsModalOpen(false)
-                     setFormKey((prev) => prev + 1)
-                 }}
+                 onClose={closeModal}
           >
               <CategoriesForm
                   key={formKey}
