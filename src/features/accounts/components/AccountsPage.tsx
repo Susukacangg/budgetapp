@@ -18,6 +18,7 @@ import {
 } from "../repository.ts"
 import {AccountsForm} from "./AccountsForm.tsx";
 import {minorUnitsToCurrencyDisplay} from "../../../domain/money";
+import {Add} from "../../../shared/icon";
 
 export function AccountsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -124,8 +125,9 @@ export function AccountsPage() {
                     }}/>
                 ) : renderAccountsList()
             }
-            <Fab onClick={() => setIsModalOpen(true)}
-            />
+            <Fab onClick={() => setIsModalOpen(true)}>
+                <Add width={2.75}/>
+            </Fab>
             <Modal title={"Add Account"}
                    isOpen={isModalOpen}
                    onClose={closeModal}
