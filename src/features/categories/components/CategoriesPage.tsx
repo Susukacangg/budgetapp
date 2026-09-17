@@ -20,7 +20,7 @@ export function CategoriesPage() {
     const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([])
     const [categoriesList, setCategoriesList] = useState<Category[]>([])
     const [isInserting, setIsInserting] = useState<boolean>(false)
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false)
     const [isInsertFormDisplay, setIsInsertFormDisplay] = useState<boolean>(false)
     const [isDetailDisplay, setIsDetailDisplay] = useState<boolean>(false)
     const [modalTitle, setModalTitle] = useState<string>("")
@@ -30,7 +30,7 @@ export function CategoriesPage() {
 
         async function loadCategories() {
             try {
-                setIsLoading(true)
+                setIsLoadingCategories(true)
                 const categories: CategoryDao[] = await getAllCategories()
                 // Ignore the Strict Mode (or navigate-away) request that finished after cleanup
                 if (areCategoriesLoaded) return
@@ -41,7 +41,7 @@ export function CategoriesPage() {
             } catch (err) {
                 if (!areCategoriesLoaded) console.error('get failed:', err)
             } finally {
-                if (!areCategoriesLoaded) setIsLoading(false)
+                if (!areCategoriesLoaded) setIsLoadingCategories(false)
             }
         }
 
@@ -157,12 +157,12 @@ export function CategoriesPage() {
       <section className="page">
           <h2>Categories</h2>
 
-          {isLoading && <Spinner style={{
+          {isLoadingCategories && <Spinner style={{
               alignSelf: 'center',
               marginTop: '50px'
           }}/>}
 
-          {!isLoading && renderListByCategoryType()}
+          {!isLoadingCategories && renderListByCategoryType()}
 
           <Modal title={modalTitle}
                  isOpen={isModalOpen}
