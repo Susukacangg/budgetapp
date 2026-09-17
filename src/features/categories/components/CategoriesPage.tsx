@@ -1,6 +1,5 @@
 import {useState, useEffect, Fragment, type SyntheticEvent} from 'react'
 import {List, ListItem, Fab, Modal, Spinner} from '../../../shared/ui'
-import {ChevronDown} from '../../../shared/icon'
 import {CategoriesForm} from './CategoriesForm.tsx'
 import {
     type CategoryGroup,
@@ -11,15 +10,20 @@ import {
     type Category
 } from '../model.ts'
 import {type CategoryDao, getAllCategories, insertCategory} from "../repository.ts";
+import {CategoryDetailDisplay} from "./CategoryDetailDisplay.tsx";
+import {Add} from "../../../shared/icon";
 
 export function CategoriesPage() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
     const [formKey, setFormKey] = useState<number>(0)
-    const [openIds, setOpenIds] = useState<Set<number>>(new Set())
-    const [groups, setGroups] = useState<CategoryGroup[]>([])
+    const [openId, setOpenId] = useState<number>()
+    const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([])
     const [categoriesList, setCategoriesList] = useState<Category[]>([])
     const [isInserting, setIsInserting] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isInsertFormDisplay, setIsInsertFormDisplay] = useState<boolean>(false)
+    const [isDetailDisplay, setIsDetailDisplay] = useState<boolean>(false)
+    const [modalTitle, setModalTitle] = useState<string>("")
 
     useEffect(() => {
         let areCategoriesLoaded = false;
@@ -33,7 +37,7 @@ export function CategoriesPage() {
                 console.log('fetched categories: ', categories)
                 const converted: Category[] = categories.map(convertCategoryFromDao)
                 setCategoriesList(converted)
-                setGroups(groupCategories(converted))
+                setCategoryGroups(groupCategories(converted))
             } catch (err) {
                 if (!areCategoriesLoaded) console.error('get failed:', err)
             } finally {
@@ -71,7 +75,7 @@ export function CategoriesPage() {
             console.log("Inserted: ", saved)
             const converted = convertCategoryFromDao(saved)
             setCategoriesList((prev) => [...prev, converted])
-            setGroups(groupCategories([...categoriesList, converted]))
+            setCategoryGroups(groupCategories([...categoriesList, converted]))
             closeModal()
         } catch (err) {
             console.log("Insert failed: ", err)
@@ -80,21 +84,12 @@ export function CategoriesPage() {
         }
     }
 
-    function openListItem(id: number) {
-        setOpenIds(prevState => {
-            const newState = new Set(prevState)
-            if (newState.has(id)) newState.delete(id)
-            else newState.add(id)
-            return newState
-        })
-    }
-
     function renderListByCategoryType() {
         return Object.values(CATEGORY_TYPES)
             .map((categoryType) => (
                 <List key={categoryType}>
                     <p className={"muted"}>{categoryType}</p>
-                    {groups
+                    {categoryGroups
                         .filter((group) => group.parent.type == categoryType)
                         .map((categoryGroup, index) => (
                             renderCategoryListItem(categoryGroup, index)
@@ -109,59 +104,53 @@ export function CategoriesPage() {
             <Fragment key={parent.id}>
                 <ListItem
                     index={index}
-                    clickable={hasSubCat(children)}
                     onClick={() => openListItem(parent.id)}
                 >
-                    <p>
-                        <b>{parent.name}</b>
-                    </p>
-                    <div className="trailing">
-                        {renderCategoryDropdownButton(parent.id, hasSubCat(children))}
+                    <div>
+                        <b>{`${parent.name}${children.length > 0 ? ` (${children.length})` : ""}`}</b>
+                        <p style={{
+                            color: "var(--text-muted)",
+                            fontStyle: "italic",
+                            fontSize: "12px",
+                        }}>
+                            {children.map((category, index) => (
+                                `${category.name}${index === children.length - 1 ? "" : ", "}`
+                            ))}
+                        </p>
                     </div>
                 </ListItem>
-                <List
-                    className={"subgroup-dropdown-shell"}
-                    style={{
-                        margin: openIds.has(parent.id) ? 'var(--subgroup-dropdown-shell-margin)' : 0,
-                        padding: openIds.has(parent.id) ? 'var(--subgroup-dropdown-shell-padding)' : 0,
-                    }}
-                >
-                    {openIds.has(parent.id) && children.map((subCat, index) => (
-                        <ListItem
-                            index={index}
-                            key={subCat.id}
-                        >
-                            {subCat.name}
-                        </ListItem>
-                    ))}
-                </List>
             </Fragment>
         )
     }
 
-    function renderCategoryDropdownButton(parentId: number, hasChildren: boolean) {
-        if (hasChildren) {
-            return (
-                <ChevronDown
-                    style={{
-                        transform: openIds.has(parentId) ? 'rotate(180deg)' : 'rotate(0deg)',
-                        width: '1.6rem',
-                        height: '1.6rem',
-                        color: 'var(--accent)',
-                        transition: 'transform 0.2s linear',
-                    }}
-                />
-            )
-        }
+    function openListItem(id: number) {
+        setOpenId(id)
+        setIsDetailDisplay(true)
+        setModalTitle(() => {
+            // @ts-expect-error the result of find Array.find will never be empty
+            // as the openListItem function is only called when there's a list item being clicked on
+            const newTitle: string = categoriesList.find((category) => category.id == id).name
+            return newTitle === undefined ? "" : newTitle
+        })
+        setIsModalOpen(true)
     }
 
-    function hasSubCat(children: Category[]) {
-        return children.length > 0
+    function openInsertForm() {
+        setIsInsertFormDisplay(true)
+        setModalTitle("Add New Category")
+        setIsModalOpen(true)
     }
 
     function closeModal() {
         setIsModalOpen(false)
         setFormKey((prev) => prev + 1)
+        setOpenId(undefined)
+        setIsDetailDisplay(false)
+        setIsInsertFormDisplay(false)
+    }
+
+    function getCategoryGroup(id: number) {
+        return categoryGroups.find((categoryGroup) => categoryGroup.parent.id == id)
     }
 
     return (
@@ -175,18 +164,34 @@ export function CategoriesPage() {
 
           {!isLoading && renderListByCategoryType()}
 
-          <Modal title={"Add Category"}
+          <Modal title={modalTitle}
                  isOpen={isModalOpen}
                  onClose={closeModal}
+                 position="right"
+                 style={{
+                     zIndex: 69
+                 }}
           >
-              <CategoriesForm
-                  key={formKey}
-                  isLoading={isInserting}
-                  availableCategories={categoriesList}
-                  onSubmitHandler={addNewCategory}
-              />
+              {isInsertFormDisplay &&
+                  <CategoriesForm
+                      key={formKey}
+                      isLoading={isInserting}
+                      availableCategories={categoriesList}
+                      onSubmitHandler={addNewCategory}
+                  />
+              }
+              {isDetailDisplay &&
+                  <CategoryDetailDisplay
+                      // @ts-expect-error category won't be empty
+                      // because this element will only be rendered if there even
+                      // is a list item to click on
+                      categoryGroup={getCategoryGroup(openId)}
+                  />
+              }
           </Modal>
-          <Fab onClick={() => setIsModalOpen(true)}/>
+          <Fab onClick={openInsertForm}>
+              <Add width={2.75}/>
+          </Fab>
       </section>
     )
 }
