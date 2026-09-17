@@ -11,7 +11,8 @@ type ModalProps = {
   isOpen: boolean
   onClose: () => void
   position?: ModalPosition
-  children: ReactNode
+  children: ReactNode,
+  style?: CSSProperties
 }
 
 export function Modal({
@@ -19,7 +20,8 @@ export function Modal({
       isOpen,
       onClose,
       position='center',
-      children
+      children,
+      style
     }: Readonly<ModalProps>) {
   const shellRef = useRef<HTMLDivElement>(null)
 
@@ -71,6 +73,10 @@ export function Modal({
       ref={shellRef}
       className={`modal-shell ${isOpen ? 'is-open' : ''}`}
       tabIndex={-1}
+      style={{
+        zIndex: 100,
+        ...style
+      }}
     >
       <div
         className="modal-backdrop"
