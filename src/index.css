@@ -6,12 +6,15 @@
   --text: #3d4450;
   --text-muted: #6b7280;
   --text-strong: #111827;
+  --text-error: #ee4949;
   --bg: #f7f5f1;
   --surface: #ffffff;
   --border: #ddd6cb;
   --accent: #1f6f5b;
   --accent-soft: #e4f1ed;
   --accent-active: color-mix(in srgb, var(--accent) 80%, black);
+  --accent-error: #ab1515;
+  --accent-error-active: #811717;
   --sans: 'IBM Plex Sans', 'Segoe UI', sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
   --bouncy-cubic-bezier: cubic-bezier(0.68, -0.5, 0.165, 1.55);
@@ -289,10 +292,13 @@ option::checkmark {
  *
  */
 .fab {
+  --fab-bg-color: var(--accent);
+  --fab-bg-color-active: var(--accent-active);
+  --fab-outline-color: var(--accent);
   width: 3rem;
   height: 3rem;
   padding: 0;
-  background-color: var(--accent);
+  background-color: var(--fab-bg-color);
   color: var(--surface);
   box-shadow:
     0 2px 6px rgba(17, 24, 39, 0.3),
@@ -311,12 +317,12 @@ option::checkmark {
 }
 
 .fab:active {
-  background-color: var(--accent-active);
+  background-color: var(--fab-bg-color-active);
   transform: translateY(-0.5px);
 }
 
 .fab:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--fab-outline-color);
   outline-offset: 3px;
 }
 

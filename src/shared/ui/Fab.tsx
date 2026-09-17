@@ -1,17 +1,24 @@
-import type { MouseEventHandler, CSSProperties } from 'react'
-import {Add} from '../icon/'
+import type {MouseEventHandler, CSSProperties, ReactElement} from 'react'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const FAB_POSITIONS = ['top-right', 'bottom-right', 'top-left', 'bottom-left'] as const
 type FabPosition = (typeof FAB_POSITIONS)[number]
 
 type FabProps = {
-  onClick?: MouseEventHandler<HTMLButtonElement>
-  position?: FabPosition
-  margin?: number
+    onClick?: MouseEventHandler<HTMLButtonElement>,
+    position?: FabPosition,
+    margin?: number,
+    children?: ReactElement,
+    style?: CSSProperties
 }
 
-export function Fab({ onClick, position='bottom-right', margin=2 }: Readonly<FabProps>) {
+export function Fab({
+        onClick,
+        position='bottom-right',
+        margin=2,
+        children,
+        style
+    }: Readonly<FabProps>) {
 
     function getPositionInset(position: string): CSSProperties {
         const margins: string = `${margin}rem`
@@ -21,21 +28,25 @@ export function Fab({ onClick, position='bottom-right', margin=2 }: Readonly<Fab
                 return {
                     top: margins,
                     right: margins,
+                    ...style,
                 }
             case 'bottom-right':
                 return {
                     right: margins,
                     bottom: margins,
+                    ...style,
                 }
             case 'top-left':
                 return {
                     top: margins,
                     left: margins,
+                    ...style,
                 }
             case 'bottom-left':
                 return {
                     bottom: margins,
                     left: margins,
+                    ...style,
                 }
             default:
                 return {}
@@ -49,7 +60,7 @@ export function Fab({ onClick, position='bottom-right', margin=2 }: Readonly<Fab
             onClick={onClick}
             style={getPositionInset(position)}
         >
-            <Add width={2.75}/>
+            {children}
         </button>
     )
 }
