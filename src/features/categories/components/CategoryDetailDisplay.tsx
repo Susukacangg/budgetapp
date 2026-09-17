@@ -5,9 +5,10 @@ import {type CSSProperties} from "react";
 
 type CategoryDetailDisplayProps = {
     categoryGroup: CategoryGroup,
+    onSubCatSelect: (id: number) => void,
 }
 
-export function CategoryDetailDisplay({categoryGroup}: CategoryDetailDisplayProps) {
+export function CategoryDetailDisplay({categoryGroup, onSubCatSelect}: CategoryDetailDisplayProps) {
 
     function getCategoryDesc() {
         const categoryDesc = categoryGroup.parent.categoryDesc
@@ -36,6 +37,7 @@ export function CategoryDetailDisplay({categoryGroup}: CategoryDetailDisplayProp
                         {categoryGroup.children.map((subCat) => (
                             <ListItem
                                 key={subCat.id}
+                                onClick={() => onSubCatSelect(subCat.id)}
                             >
                                 {subCat.name}
                             </ListItem>

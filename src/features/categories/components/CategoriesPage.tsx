@@ -13,17 +13,22 @@ import {type CategoryDao, getAllCategories, insertCategory} from "../repository.
 import {CategoryDetailDisplay} from "./CategoryDetailDisplay.tsx";
 import {Add} from "../../../shared/icon";
 
+const MODAL_VIEW_TYPE = {
+    INSERT_CATEGORY_FORM: "insertCategoryForm",
+    CATEGORY_DETAIL_DISPLAY: "categoryDetailDisplay"
+} as const
+
+type ModalView =
+    | {kind: typeof MODAL_VIEW_TYPE.INSERT_CATEGORY_FORM}
+    | {kind: typeof MODAL_VIEW_TYPE.CATEGORY_DETAIL_DISPLAY, catId: number}
+
 export function CategoriesPage() {
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-    const [formKey, setFormKey] = useState<number>(0)
-    const [openId, setOpenId] = useState<number>()
     const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([])
     const [categoriesList, setCategoriesList] = useState<Category[]>([])
     const [isInserting, setIsInserting] = useState<boolean>(false)
     const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false)
-    const [isInsertFormDisplay, setIsInsertFormDisplay] = useState<boolean>(false)
-    const [isDetailDisplay, setIsDetailDisplay] = useState<boolean>(false)
-    const [modalTitle, setModalTitle] = useState<string>("")
+    const [modalView, setModalView] = useState<ModalView | null>(null)
+    const isModalOpen = modalView != null
 
     useEffect(() => {
         let areCategoriesLoaded = false;
@@ -76,7 +81,7 @@ export function CategoriesPage() {
             const converted = convertCategoryFromDao(saved)
             setCategoriesList((prev) => [...prev, converted])
             setCategoryGroups(groupCategories([...categoriesList, converted]))
-            closeModal()
+            setModalView({kind: MODAL_VIEW_TYPE.CATEGORY_DETAIL_DISPLAY, catId: saved.id})
         } catch (err) {
             console.log("Insert failed: ", err)
         } finally {
@@ -123,34 +128,63 @@ export function CategoriesPage() {
         )
     }
 
-    function openListItem(id: number) {
-        setOpenId(id)
-        setIsDetailDisplay(true)
-        setModalTitle(() => {
-            // @ts-expect-error the result of find Array.find will never be empty
-            // as the openListItem function is only called when there's a list item being clicked on
-            const newTitle: string = categoriesList.find((category) => category.id == id).name
-            return newTitle === undefined ? "" : newTitle
-        })
-        setIsModalOpen(true)
+    function renderModalView() {
+        switch (modalView?.kind) {
+            case MODAL_VIEW_TYPE.INSERT_CATEGORY_FORM:
+                return (
+                    <CategoriesForm
+                        isLoading={isInserting}
+                        availableCategories={categoriesList}
+                        onSubmitHandler={addNewCategory}
+                    />
+                )
+            case MODAL_VIEW_TYPE.CATEGORY_DETAIL_DISPLAY:
+                return (
+                    <CategoryDetailDisplay
+                        // @ts-expect-error category group won't be empty
+                        // because this element will only be rendered if there even
+                        // is a list item to click on
+                        categoryGroup={getCategoryGroup(modalView.catId)}
+                        onSubCatSelect={openListItem}
+                    />
+                )
+            default: return (<></>)
+        }
     }
 
     function openInsertForm() {
-        setIsInsertFormDisplay(true)
-        setModalTitle("Add New Category")
-        setIsModalOpen(true)
+        setModalView({kind: MODAL_VIEW_TYPE.INSERT_CATEGORY_FORM})
+    }
+
+    function openListItem(id: number) {
+        setModalView({kind: MODAL_VIEW_TYPE.CATEGORY_DETAIL_DISPLAY, catId: id})
     }
 
     function closeModal() {
-        setIsModalOpen(false)
-        setFormKey((prev) => prev + 1)
-        setOpenId(undefined)
-        setIsDetailDisplay(false)
-        setIsInsertFormDisplay(false)
+        setModalView(null)
     }
 
     function getCategoryGroup(id: number) {
-        return categoryGroups.find((categoryGroup) => categoryGroup.parent.id == id)
+        const parent = categoriesList.find((cat) => cat.id === id)
+        if (!parent) return null
+        return {
+            parent: parent,
+            children: categoriesList.filter((cat) => cat.parentId === id)
+        }
+    }
+
+    function getModalTitle(): string {
+        switch (modalView?.kind) {
+            case MODAL_VIEW_TYPE.INSERT_CATEGORY_FORM:
+                return "Add New Category"
+            case MODAL_VIEW_TYPE.CATEGORY_DETAIL_DISPLAY: {
+                const newTitle = categoriesList.find(
+                    (category) => category.id == modalView.catId)?.name
+                return newTitle === undefined ? "" : newTitle
+            }
+            default:
+                return ""
+        }
     }
 
     return (
@@ -164,7 +198,7 @@ export function CategoriesPage() {
 
           {!isLoadingCategories && renderListByCategoryType()}
 
-          <Modal title={modalTitle}
+          <Modal title={getModalTitle()}
                  isOpen={isModalOpen}
                  onClose={closeModal}
                  position="right"
@@ -172,22 +206,7 @@ export function CategoriesPage() {
                      zIndex: 69
                  }}
           >
-              {isInsertFormDisplay &&
-                  <CategoriesForm
-                      key={formKey}
-                      isLoading={isInserting}
-                      availableCategories={categoriesList}
-                      onSubmitHandler={addNewCategory}
-                  />
-              }
-              {isDetailDisplay &&
-                  <CategoryDetailDisplay
-                      // @ts-expect-error category won't be empty
-                      // because this element will only be rendered if there even
-                      // is a list item to click on
-                      categoryGroup={getCategoryGroup(openId)}
-                  />
-              }
+              {renderModalView()}
           </Modal>
           <Fab onClick={openInsertForm}>
               <Add width={2.75}/>
