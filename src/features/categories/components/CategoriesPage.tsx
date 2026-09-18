@@ -28,7 +28,7 @@ export function CategoriesPage() {
     const [isInserting, setIsInserting] = useState<boolean>(false)
     const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false)
     const [modalView, setModalView] = useState<ModalView | null>(null)
-    const isModalOpen = modalView != null
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
     useEffect(() => {
         let areCategoriesLoaded = false;
@@ -153,15 +153,18 @@ export function CategoriesPage() {
     }
 
     function openInsertForm() {
+        setIsModalOpen(true)
         setModalView({kind: MODAL_VIEW_TYPE.INSERT_CATEGORY_FORM})
     }
 
     function openListItem(id: number) {
+        setIsModalOpen(true)
         setModalView({kind: MODAL_VIEW_TYPE.CATEGORY_DETAIL_DISPLAY, catId: id})
     }
 
     function closeModal() {
-        setModalView(null)
+        setIsModalOpen(false)
+        setTimeout(() => setModalView(null), 800)
     }
 
     function getCategoryGroup(id: number) {
