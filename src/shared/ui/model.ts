@@ -5,4 +5,4 @@ export const MODAL_VIEW_TYPE = {
 
 export type ModalView =
     | {kind: typeof MODAL_VIEW_TYPE.INSERT_FORM}
-    | {kind: typeof MODAL_VIEW_TYPE.DETAIL_DISPLAY, catId: number}
+    | {kind: typeof MODAL_VIEW_TYPE.DETAIL_DISPLAY, id: number}
