@@ -17,7 +17,7 @@ import {
     type AccountDao
 } from "../repository.ts"
 import {AccountsForm} from "./AccountsForm.tsx";
-import {minorUnitsToCurrencyDisplay} from "../../../domain/money";
+import {minorUnitsToCurrencyDisplay} from "../../../shared/utility";
 import {Add} from "../../../shared/icon";
 
 export function AccountsPage() {
