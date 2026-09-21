@@ -12,16 +12,15 @@ import {
 import {type CategoryDao, getAllCategories, insertCategory} from "../repository.ts";
 import {CategoryDetailDisplay} from "./CategoryDetailDisplay.tsx";
 import {Add} from "../../../shared/icon";
-import {MODAL_VIEW_TYPE, type ModalView} from "../../../shared/ui/";
+import {MODAL_VIEW_TYPE, useModalStack} from "../../../shared/ui/";
 
 export function CategoriesPage() {
     const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([])
     const [categoriesList, setCategoriesList] = useState<Category[]>([])
     const [isInserting, setIsInserting] = useState<boolean>(false)
     const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false)
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
-    const [modalViewStack, setModalViewStack] = useState<ModalView[]>([])
-    const modalView = modalViewStack.at(-1) ?? null
+    const modal = useModalStack()
+    const modalView = modal.current
 
     useEffect(() => {
         let areCategoriesLoaded = false;
@@ -74,7 +73,7 @@ export function CategoriesPage() {
             const converted = convertCategoryFromDao(saved)
             setCategoriesList((prev) => [...prev, converted])
             setCategoryGroups(groupCategories([...categoriesList, converted]))
-            setModalViewStack([{kind: MODAL_VIEW_TYPE.DETAIL_DISPLAY, catId: saved.id}])
+            modal.reset({kind: MODAL_VIEW_TYPE.DETAIL_DISPLAY, id: saved.id})
         } catch (err) {
             console.log("Insert failed: ", err)
         } finally {
@@ -137,7 +136,7 @@ export function CategoriesPage() {
                         // @ts-expect-error category group won't be empty
                         // because this element will only be rendered if there even
                         // is a list item to click on
-                        categoryGroup={getCategoryGroup(modalView.catId)}
+                        categoryGroup={getCategoryGroup(modalView.id)}
                         onSubCatSelect={openListItem}
                     />
                 )
@@ -145,27 +144,12 @@ export function CategoriesPage() {
         }
     }
 
-    function pushModalView(modalView: ModalView) {
-        setModalViewStack((prevStack) => [...prevStack, modalView])
-    }
-
-    function popModalView() {
-        setModalViewStack((prevStack) => prevStack.slice(0, -1))
-    }
-
     function openInsertForm() {
-        setIsModalOpen(true)
-        pushModalView({kind: MODAL_VIEW_TYPE.INSERT_FORM})
+        modal.push({kind: MODAL_VIEW_TYPE.INSERT_FORM})
     }
 
     function openListItem(id: number) {
-        setIsModalOpen(true)
-        pushModalView({kind: MODAL_VIEW_TYPE.DETAIL_DISPLAY, catId: id})
-    }
-
-    function closeModal() {
-        setIsModalOpen(() => modalViewStack.length > 1)
-        setTimeout(() => popModalView(), modalViewStack.length > 1 ? 0 : 400)
+        modal.push({kind: MODAL_VIEW_TYPE.DETAIL_DISPLAY, id})
     }
 
     function getCategoryGroup(id: number) {
@@ -183,7 +167,7 @@ export function CategoriesPage() {
                 return "Add New Category"
             case MODAL_VIEW_TYPE.DETAIL_DISPLAY: {
                 const newTitle = categoriesList.find(
-                    (category) => category.id == modalView.catId)?.name
+                    (category) => category.id == modalView.id)?.name
                 return newTitle === undefined ? "" : newTitle
             }
             default:
@@ -203,8 +187,8 @@ export function CategoriesPage() {
           {!isLoadingCategories && renderListByCategoryType()}
 
           <Modal title={getModalTitle()}
-                 isOpen={isModalOpen}
-                 onClose={closeModal}
+                 isOpen={modal.isOpen}
+                 onClose={modal.close}
                  position="right"
                  style={{
                      zIndex: 69
