@@ -27,8 +27,9 @@ export function CategoriesPage() {
     const [categoriesList, setCategoriesList] = useState<Category[]>([])
     const [isInserting, setIsInserting] = useState<boolean>(false)
     const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false)
-    const [modalView, setModalView] = useState<ModalView | null>(null)
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+    const [modalViewStack, setModalViewStack] = useState<ModalView[]>([])
+    const modalView = modalViewStack.at(-1) ?? null
 
     useEffect(() => {
         let areCategoriesLoaded = false;
@@ -81,7 +82,7 @@ export function CategoriesPage() {
             const converted = convertCategoryFromDao(saved)
             setCategoriesList((prev) => [...prev, converted])
             setCategoryGroups(groupCategories([...categoriesList, converted]))
-            setModalView({kind: MODAL_VIEW_TYPE.CATEGORY_DETAIL_DISPLAY, catId: saved.id})
+            setModalViewStack([{kind: MODAL_VIEW_TYPE.CATEGORY_DETAIL_DISPLAY, catId: saved.id}])
         } catch (err) {
             console.log("Insert failed: ", err)
         } finally {
@@ -152,19 +153,27 @@ export function CategoriesPage() {
         }
     }
 
+    function pushModalView(modalView: ModalView) {
+        setModalViewStack((prevStack) => [...prevStack, modalView])
+    }
+
+    function popModalView() {
+        setModalViewStack((prevStack) => prevStack.slice(0, -1))
+    }
+
     function openInsertForm() {
         setIsModalOpen(true)
-        setModalView({kind: MODAL_VIEW_TYPE.INSERT_CATEGORY_FORM})
+        pushModalView({kind: MODAL_VIEW_TYPE.INSERT_CATEGORY_FORM})
     }
 
     function openListItem(id: number) {
         setIsModalOpen(true)
-        setModalView({kind: MODAL_VIEW_TYPE.CATEGORY_DETAIL_DISPLAY, catId: id})
+        pushModalView({kind: MODAL_VIEW_TYPE.CATEGORY_DETAIL_DISPLAY, catId: id})
     }
 
     function closeModal() {
-        setIsModalOpen(false)
-        setTimeout(() => setModalView(null), 800)
+        setIsModalOpen(() => modalViewStack.length > 1)
+        setTimeout(() => popModalView(), modalViewStack.length > 1 ? 0 : 400)
     }
 
     function getCategoryGroup(id: number) {
