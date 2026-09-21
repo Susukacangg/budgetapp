@@ -12,15 +12,7 @@ import {
 import {type CategoryDao, getAllCategories, insertCategory} from "../repository.ts";
 import {CategoryDetailDisplay} from "./CategoryDetailDisplay.tsx";
 import {Add} from "../../../shared/icon";
-
-const MODAL_VIEW_TYPE = {
-    INSERT_CATEGORY_FORM: "insertCategoryForm",
-    CATEGORY_DETAIL_DISPLAY: "categoryDetailDisplay"
-} as const
-
-type ModalView =
-    | {kind: typeof MODAL_VIEW_TYPE.INSERT_CATEGORY_FORM}
-    | {kind: typeof MODAL_VIEW_TYPE.CATEGORY_DETAIL_DISPLAY, catId: number}
+import {MODAL_VIEW_TYPE, type ModalView} from "../../../shared/ui/";
 
 export function CategoriesPage() {
     const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([])
@@ -82,7 +74,7 @@ export function CategoriesPage() {
             const converted = convertCategoryFromDao(saved)
             setCategoriesList((prev) => [...prev, converted])
             setCategoryGroups(groupCategories([...categoriesList, converted]))
-            setModalViewStack([{kind: MODAL_VIEW_TYPE.CATEGORY_DETAIL_DISPLAY, catId: saved.id}])
+            setModalViewStack([{kind: MODAL_VIEW_TYPE.DETAIL_DISPLAY, catId: saved.id}])
         } catch (err) {
             console.log("Insert failed: ", err)
         } finally {
@@ -131,7 +123,7 @@ export function CategoriesPage() {
 
     function renderModalView() {
         switch (modalView?.kind) {
-            case MODAL_VIEW_TYPE.INSERT_CATEGORY_FORM:
+            case MODAL_VIEW_TYPE.INSERT_FORM:
                 return (
                     <CategoriesForm
                         isLoading={isInserting}
@@ -139,7 +131,7 @@ export function CategoriesPage() {
                         onSubmitHandler={addNewCategory}
                     />
                 )
-            case MODAL_VIEW_TYPE.CATEGORY_DETAIL_DISPLAY:
+            case MODAL_VIEW_TYPE.DETAIL_DISPLAY:
                 return (
                     <CategoryDetailDisplay
                         // @ts-expect-error category group won't be empty
@@ -163,12 +155,12 @@ export function CategoriesPage() {
 
     function openInsertForm() {
         setIsModalOpen(true)
-        pushModalView({kind: MODAL_VIEW_TYPE.INSERT_CATEGORY_FORM})
+        pushModalView({kind: MODAL_VIEW_TYPE.INSERT_FORM})
     }
 
     function openListItem(id: number) {
         setIsModalOpen(true)
-        pushModalView({kind: MODAL_VIEW_TYPE.CATEGORY_DETAIL_DISPLAY, catId: id})
+        pushModalView({kind: MODAL_VIEW_TYPE.DETAIL_DISPLAY, catId: id})
     }
 
     function closeModal() {
@@ -187,9 +179,9 @@ export function CategoriesPage() {
 
     function getModalTitle(): string {
         switch (modalView?.kind) {
-            case MODAL_VIEW_TYPE.INSERT_CATEGORY_FORM:
+            case MODAL_VIEW_TYPE.INSERT_FORM:
                 return "Add New Category"
-            case MODAL_VIEW_TYPE.CATEGORY_DETAIL_DISPLAY: {
+            case MODAL_VIEW_TYPE.DETAIL_DISPLAY: {
                 const newTitle = categoriesList.find(
                     (category) => category.id == modalView.catId)?.name
                 return newTitle === undefined ? "" : newTitle
