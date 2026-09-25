@@ -7,7 +7,11 @@ type AppFormProps = {
 
 export function AppForm({onSubmitHandler, children}: Readonly<AppFormProps>) {
     return (
-        <div tabIndex={-1}>
+        <div tabIndex={-1}
+             style={{
+                 outline: 'none'
+             }}
+        >
             <form className="app-form" onSubmit={onSubmitHandler}>
                 {children}
             </form>
