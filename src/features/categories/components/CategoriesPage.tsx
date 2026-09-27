@@ -1,4 +1,4 @@
-import {useState, useEffect, Fragment, type SyntheticEvent} from 'react'
+import {useState, useEffect, Fragment, type SyntheticEvent, type ReactElement} from 'react'
 import {List, ListItem, Fab, Modal, ModalDetailDisplay, Spinner} from '../../../shared/ui'
 import {CategoriesForm} from './CategoriesForm.tsx'
 import {
@@ -14,6 +14,7 @@ import {toCategoryDetailView} from '../detailDisplay.ts'
 import {Add} from "../../../shared/icon";
 import {useModalStack} from "../../../shared/ui/";
 import {MODAL_VIEW_TYPE} from "../../../shared/types";
+import {ModalTitle} from "../../../shared/ui/ModalTitle.tsx";
 
 export function CategoriesPage() {
     const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([])
@@ -163,17 +164,19 @@ export function CategoriesPage() {
         }
     }
 
-    function getModalTitle(): string {
+    function getModalTitle(): ReactElement {
         switch (modalView?.kind) {
             case MODAL_VIEW_TYPE.INSERT_FORM:
-                return "Add New Category"
+                return <h2>"Add New Category"</h2>
             case MODAL_VIEW_TYPE.DETAIL_DISPLAY: {
-                const newTitle = categoriesList.find(
-                    (category) => category.id == modalView.id)?.name
-                return newTitle === undefined ? "" : newTitle
+                return (
+                    <h2>
+                        {categoriesList.find((category) => category.id == modalView.id)?.name}
+                    </h2>
+                )
             }
             default:
-                return ""
+                return <></>
         }
     }
 
@@ -188,14 +191,16 @@ export function CategoriesPage() {
 
           {!isLoadingCategories && renderListByCategoryType()}
 
-          <Modal title={getModalTitle()}
-                 isOpen={modal.isOpen}
+          <Modal isOpen={modal.isOpen}
                  onClose={modal.close}
                  position="right"
                  style={{
                      zIndex: 69
                  }}
           >
+              <ModalTitle>
+                  {getModalTitle()}
+              </ModalTitle>
               {renderModalView()}
           </Modal>
           <Fab onClick={openInsertForm}>

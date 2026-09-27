@@ -423,10 +423,6 @@ option::checkmark {
   align-items: center;
 }
 
-.modal-title {
-  margin: 0;
-}
-
 .modal-close-btn {
   position: absolute;
   top: 1rem;

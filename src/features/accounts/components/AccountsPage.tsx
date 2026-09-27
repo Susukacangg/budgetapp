@@ -2,7 +2,8 @@ import {
     type SyntheticEvent,
     useState,
     useEffect,
-    Fragment} from 'react'
+    Fragment, type ReactElement
+} from 'react'
 import {
     type Account, ACCOUNT_TYPES,
     convertAccountFromDao,
@@ -27,6 +28,7 @@ import {AccountsForm} from "./AccountsForm.tsx";
 import {minorUnitsToCurrencyDisplay} from "../../../shared/utility";
 import {Add} from "../../../shared/icon";
 import {toAccountDetailView} from '../detailDisplay.ts'
+import {ModalTitle} from "../../../shared/ui/ModalTitle.tsx";
 
 export function AccountsPage() {
     const modal = useModalStack()
@@ -156,16 +158,15 @@ export function AccountsPage() {
         }
     }
 
-    function getModalTitle(): string {
+    function getModalTitle(): ReactElement {
         switch (modalView?.kind) {
             case MODAL_VIEW_TYPE.INSERT_FORM:
-                return 'Add Account'
+                return <h2>'Add Account'</h2>
             case MODAL_VIEW_TYPE.DETAIL_DISPLAY: {
-                const name = getAccount(modalView.id)?.name
-                return name ?? ''
+                return <h2>{getAccount(modalView.id)?.name}</h2>
             }
             default:
-                return ''
+                return <></>
         }
     }
 
@@ -183,11 +184,13 @@ export function AccountsPage() {
             <Fab onClick={openInsertForm}>
                 <Add width={2.75}/>
             </Fab>
-            <Modal title={getModalTitle()}
-                   isOpen={modal.isOpen}
+            <Modal isOpen={modal.isOpen}
                    onClose={modal.close}
                    position={"right"}
             >
+                <ModalTitle>
+                    {getModalTitle()}
+                </ModalTitle>
                 {renderModalView()}
             </Modal>
         </section>
