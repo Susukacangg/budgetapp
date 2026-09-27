@@ -1,5 +1,5 @@
 import {useState, useEffect, Fragment, type SyntheticEvent} from 'react'
-import {List, ListItem, Fab, Modal, Spinner} from '../../../shared/ui'
+import {List, ListItem, Fab, Modal, ModalDetailDisplay, Spinner} from '../../../shared/ui'
 import {CategoriesForm} from './CategoriesForm.tsx'
 import {
     type CategoryGroup,
@@ -10,9 +10,10 @@ import {
     type Category
 } from '../model.ts'
 import {type CategoryDao, getAllCategories, insertCategory} from "../repository.ts";
-import {CategoryDetailDisplay} from "./CategoryDetailDisplay.tsx";
+import {toCategoryDetailView} from '../detailDisplay.ts'
 import {Add} from "../../../shared/icon";
-import {MODAL_VIEW_TYPE, useModalStack} from "../../../shared/ui/";
+import {useModalStack} from "../../../shared/ui/";
+import {MODAL_VIEW_TYPE} from "../../../shared/types";
 
 export function CategoriesPage() {
     const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([])
@@ -130,16 +131,17 @@ export function CategoriesPage() {
                         onSubmitHandler={addNewCategory}
                     />
                 )
-            case MODAL_VIEW_TYPE.DETAIL_DISPLAY:
+            case MODAL_VIEW_TYPE.DETAIL_DISPLAY: {
+                const categoryGroup = getCategoryGroup(modalView.id)
+                if (categoryGroup == null) {
+                    return <></>
+                }
                 return (
-                    <CategoryDetailDisplay
-                        // @ts-expect-error category group won't be empty
-                        // because this element will only be rendered if there even
-                        // is a list item to click on
-                        categoryGroup={getCategoryGroup(modalView.id)}
-                        onSubCatSelect={openListItem}
+                    <ModalDetailDisplay
+                        {...toCategoryDetailView(categoryGroup, openListItem)}
                     />
                 )
+            }
             default: return (<></>)
         }
     }

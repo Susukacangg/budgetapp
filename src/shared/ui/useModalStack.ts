@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from 'react'
-import {type ModalView} from './model.ts'
+import {type ModalView} from '../types'
 
 /** Same duration as the `.modal-card` transition in index.css. */
 const MODAL_EXIT_MS = 400
@@ -77,6 +77,7 @@ export function useModalStack(): ModalStack {
         exitTimerRef.current = setTimeout(() => {
             exitTimerRef.current = null
             // Ignore the timer if a newer view was pushed before it fired.
+            // This is more of a precaution if the timeout was never cleared
             if (stateRef.current !== closing) return
             const empty = {isOpen: false, stack: []}
             stateRef.current = empty
