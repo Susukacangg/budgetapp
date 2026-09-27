@@ -29,7 +29,6 @@ export function ModalDetailDisplay({
                         type="text"
                         name={field.htmlFor}
                         readOnly
-                        style={{cursor: 'default'}}
                         value={field.value}
                     />
                 </Fragment>

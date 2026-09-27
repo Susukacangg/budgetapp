@@ -492,6 +492,14 @@ div:has(> .app-form) {
   background-color: var(--accent-active);
 }
 
+.app-form > input[readonly] {
+  cursor: default;
+}
+
+.app-form > input[readonly]:focus {
+  border-bottom-color: var(--border);
+}
+
 @keyframes spinner {
   to {
     transform: rotate(360deg);
