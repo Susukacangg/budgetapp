@@ -2,7 +2,7 @@ import {
     type SyntheticEvent,
     useState,
     useEffect,
-    Fragment, type ReactElement
+    Fragment,
 } from 'react'
 import {
     type Account, ACCOUNT_TYPES,
@@ -12,31 +12,29 @@ import {
 import {
     Fab,
     List,
-    Modal,
     ModalDetailDisplay,
+    PageModal,
     Spinner,
     ListItem,
-    useModalStack,
+    usePageModal,
 } from '../../../shared/ui/'
 import {
     insert,
     getAllAccounts,
     type AccountDao
 } from "../repository.ts"
-import {MODAL_VIEW_TYPE} from "../../../shared/types";
 import {AccountsForm} from "./AccountsForm.tsx";
 import {minorUnitsToCurrencyDisplay} from "../../../shared/utility";
 import {Add} from "../../../shared/icon";
 import {toAccountDetailView} from '../detailDisplay.ts'
-import {ModalTitle} from "../../../shared/ui/ModalTitle.tsx";
+import {PageModalContent} from "../../../shared/ui/PageModal.tsx";
 
 export function AccountsPage() {
-    const modal = useModalStack()
-    const modalView = modal.current
     const [accountsList, setAccountsList] = useState<Account[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [isInserting, setIsInserting] = useState<boolean>(false)
     const [formKey, setFormKey] = useState<number>(0)
+    const pageModal = usePageModal()
 
     useEffect(() => {
         let areAccountsLoaded = false
@@ -87,7 +85,7 @@ export function AccountsPage() {
             const converted = convertAccountFromDao(saved)
             setAccountsList((prev) => [...prev, converted])
             setFormKey((prev) => prev + 1)
-            modal.reset({kind: MODAL_VIEW_TYPE.DETAIL_DISPLAY, id: saved.id})
+            pageModal.replaceWithDetail(saved.id)
         } catch (err) {
             console.error('Insert failed:', err)
         } finally {
@@ -106,7 +104,7 @@ export function AccountsPage() {
                             <ListItem
                                 index={index}
                                 key={account.id}
-                                onClick={() => openAccountDetail(account.id)}
+                                onClick={() => pageModal.openDetail(account.id)}
                             >
                                 <strong>{account.name}</strong>
                                 <div className="trailing">
@@ -123,51 +121,11 @@ export function AccountsPage() {
 
     function openInsertForm() {
         setFormKey((prev) => prev + 1)
-        modal.push({kind: MODAL_VIEW_TYPE.INSERT_FORM})
-    }
-
-    function openAccountDetail(id: number) {
-        modal.push({kind: MODAL_VIEW_TYPE.DETAIL_DISPLAY, id})
+        pageModal.openInsertForm()
     }
 
     function getAccount(id: number): Account | undefined {
         return accountsList.find((account) => account.id === id)
-    }
-
-    function renderModalView() {
-        switch (modalView?.kind) {
-            case MODAL_VIEW_TYPE.INSERT_FORM:
-                return (
-                    <AccountsForm
-                        key={formKey}
-                        onSubmitHandler={addNewAccount}
-                        isLoading={isInserting}
-                    />
-                )
-            case MODAL_VIEW_TYPE.DETAIL_DISPLAY: {
-                const account = getAccount(modalView.id)
-                if (account == null) {
-                    return <></>
-                }
-                return (
-                    <ModalDetailDisplay {...toAccountDetailView(account)}/>
-                )
-            }
-            default:
-                return <></>
-        }
-    }
-
-    function getModalTitle(): ReactElement {
-        switch (modalView?.kind) {
-            case MODAL_VIEW_TYPE.INSERT_FORM:
-                return <h2>'Add Account'</h2>
-            case MODAL_VIEW_TYPE.DETAIL_DISPLAY: {
-                return <h2>{getAccount(modalView.id)?.name}</h2>
-            }
-            default:
-                return <></>
-        }
     }
 
     return (
@@ -184,15 +142,26 @@ export function AccountsPage() {
             <Fab onClick={openInsertForm}>
                 <Add width={2.75}/>
             </Fab>
-            <Modal isOpen={modal.isOpen}
-                   onClose={modal.close}
-                   position={"right"}
+            <PageModal
+                modal={pageModal}
+                insertTitle="Add Account"
+                resolveDetail={(id) => {
+                    const account = getAccount(id)
+                    if (account == null) return null
+                    return {
+                        title: account.name,
+                        content: <ModalDetailDisplay {...toAccountDetailView(account)}/>,
+                    }
+                }}
             >
-                <ModalTitle>
-                    {getModalTitle()}
-                </ModalTitle>
-                {renderModalView()}
-            </Modal>
+                <PageModalContent>
+                    <AccountsForm
+                        key={formKey}
+                        onSubmitHandler={addNewAccount}
+                        isLoading={isInserting}
+                    />
+                </PageModalContent>
+            </PageModal>
         </section>
     )
 }

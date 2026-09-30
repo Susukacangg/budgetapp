@@ -1,5 +1,5 @@
-import {useState, useEffect, Fragment, type SyntheticEvent, type ReactElement} from 'react'
-import {List, ListItem, Fab, Modal, ModalDetailDisplay, Spinner} from '../../../shared/ui'
+import {useState, useEffect, Fragment, type SyntheticEvent} from 'react'
+import {List, ListItem, Fab, ModalDetailDisplay, PageModal, Spinner, usePageModal} from '../../../shared/ui'
 import {CategoriesForm} from './CategoriesForm.tsx'
 import {
     type CategoryGroup,
@@ -12,17 +12,14 @@ import {
 import {type CategoryDao, getAllCategories, insertCategory} from "../repository.ts";
 import {toCategoryDetailView} from '../detailDisplay.ts'
 import {Add} from "../../../shared/icon";
-import {useModalStack} from "../../../shared/ui/";
-import {MODAL_VIEW_TYPE} from "../../../shared/types";
-import {ModalTitle} from "../../../shared/ui/ModalTitle.tsx";
+import {PageModalContent} from "../../../shared/ui/PageModal.tsx";
 
 export function CategoriesPage() {
     const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([])
     const [categoriesList, setCategoriesList] = useState<Category[]>([])
     const [isInserting, setIsInserting] = useState<boolean>(false)
     const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false)
-    const modal = useModalStack()
-    const modalView = modal.current
+    const pageModal = usePageModal()
 
     useEffect(() => {
         let areCategoriesLoaded = false;
@@ -75,7 +72,7 @@ export function CategoriesPage() {
             const converted = convertCategoryFromDao(saved)
             setCategoriesList((prev) => [...prev, converted])
             setCategoryGroups(groupCategories([...categoriesList, converted]))
-            modal.reset({kind: MODAL_VIEW_TYPE.DETAIL_DISPLAY, id: saved.id})
+            pageModal.replaceWithDetail(saved.id)
         } catch (err) {
             console.log("Insert failed: ", err)
         } finally {
@@ -103,7 +100,7 @@ export function CategoriesPage() {
             <Fragment key={parent.id}>
                 <ListItem
                     index={index}
-                    onClick={() => openListItem(parent.id)}
+                    onClick={() => pageModal.openDetail(parent.id)}
                 >
                     <div>
                         <b>{`${parent.name}${children.length > 0 ? ` (${children.length})` : ""}`}</b>
@@ -122,61 +119,12 @@ export function CategoriesPage() {
         )
     }
 
-    function renderModalView() {
-        switch (modalView?.kind) {
-            case MODAL_VIEW_TYPE.INSERT_FORM:
-                return (
-                    <CategoriesForm
-                        isLoading={isInserting}
-                        availableCategories={categoriesList}
-                        onSubmitHandler={addNewCategory}
-                    />
-                )
-            case MODAL_VIEW_TYPE.DETAIL_DISPLAY: {
-                const categoryGroup = getCategoryGroup(modalView.id)
-                if (categoryGroup == null) {
-                    return <></>
-                }
-                return (
-                    <ModalDetailDisplay
-                        {...toCategoryDetailView(categoryGroup, openListItem)}
-                    />
-                )
-            }
-            default: return (<></>)
-        }
-    }
-
-    function openInsertForm() {
-        modal.push({kind: MODAL_VIEW_TYPE.INSERT_FORM})
-    }
-
-    function openListItem(id: number) {
-        modal.push({kind: MODAL_VIEW_TYPE.DETAIL_DISPLAY, id})
-    }
-
     function getCategoryGroup(id: number) {
         const parent = categoriesList.find((cat) => cat.id === id)
         if (!parent) return null
         return {
             parent: parent,
             children: categoriesList.filter((cat) => cat.parentId === id)
-        }
-    }
-
-    function getModalTitle(): ReactElement {
-        switch (modalView?.kind) {
-            case MODAL_VIEW_TYPE.INSERT_FORM:
-                return <h2>"Add New Category"</h2>
-            case MODAL_VIEW_TYPE.DETAIL_DISPLAY: {
-                return (
-                    <h2>
-                        {categoriesList.find((category) => category.id == modalView.id)?.name}
-                    </h2>
-                )
-            }
-            default:
-                return <></>
         }
     }
 
@@ -191,19 +139,34 @@ export function CategoriesPage() {
 
           {!isLoadingCategories && renderListByCategoryType()}
 
-          <Modal isOpen={modal.isOpen}
-                 onClose={modal.close}
-                 position="right"
-                 style={{
-                     zIndex: 69
-                 }}
+          <PageModal
+              modal={pageModal}
+              insertTitle="Add New Category"
+              resolveDetail={(id) => {
+                  const categoryGroup = getCategoryGroup(id)
+                  if (categoryGroup == null) return null
+                  return {
+                      title: categoryGroup.parent.name,
+                      content: (
+                          <ModalDetailDisplay
+                              {...toCategoryDetailView(categoryGroup, pageModal.openDetail)}
+                          />
+                      ),
+                  }
+              }}
+              style={{
+                  zIndex: 69
+              }}
           >
-              <ModalTitle>
-                  {getModalTitle()}
-              </ModalTitle>
-              {renderModalView()}
-          </Modal>
-          <Fab onClick={openInsertForm}>
+              <PageModalContent>
+                  <CategoriesForm
+                      isLoading={isInserting}
+                      availableCategories={categoriesList}
+                      onSubmitHandler={addNewCategory}
+                  />
+              </PageModalContent>
+          </PageModal>
+          <Fab onClick={pageModal.openInsertForm}>
               <Add width={2.75}/>
           </Fab>
       </section>
