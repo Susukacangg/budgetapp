@@ -1,14 +1,17 @@
 import {Children, type CSSProperties, isValidElement, type ReactElement, type ReactNode} from 'react'
-import {MODAL_VIEW_TYPE} from '../types'
+import {MODAL_VIEW_TYPE, type ModalListItemDetailView} from '../types'
 import {Modal} from './Modal.tsx'
 import {ModalTitle} from './ModalTitle.tsx'
 import {type PageModalController} from './usePageModal.ts'
+import {ModalDetailDisplay} from './ModalDetailDisplay.tsx'
+import type {Account} from "../../features/accounts";
+import type {CategoryGroup} from "../../features/categories";
 
-type PageModalContentProps = {
+type PageModalInsertFormProps = {
     children: ReactNode
 }
 
-export function PageModalContent({children}: PageModalContentProps) {
+export function PageModalInsertForm({children}: PageModalInsertFormProps) {
     return (
         <>
             {children}
@@ -16,15 +19,20 @@ export function PageModalContent({children}: PageModalContentProps) {
     )
 }
 
-type PageModalDetail = {
-    title: string
-    content: ReactNode
+export type PageModalDetailDisplayFormProps<TDetail = Account | CategoryGroup | null> = {
+    resolveDetail: (id: number) => TDetail
+    resolveTitle: (detail: TDetail) => string
+    resolveDetailDisplay: (detail: TDetail) => ModalListItemDetailView
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function PageModalDetailDisplayForm<TDetail>(_props: PageModalDetailDisplayFormProps<TDetail>) {
+    return null
 }
 
 type PageModalProps = {
     modal: PageModalController
     insertTitle: string
-    resolveDetail: (id: number) => PageModalDetail | null
     style?: CSSProperties
     children: ReactNode
 }
@@ -32,13 +40,41 @@ type PageModalProps = {
 export function PageModal({
     modal,
     insertTitle,
-    resolveDetail,
     style,
     children
 }: Readonly<PageModalProps>) {
     const childrenArr: ReactNode[] = Children.toArray(children)
-    const pageModalNode: ReactNode = childrenArr.find((child) => isValidElement(child) && child.type === PageModalContent)
-    const presented = presentModalView(modal, insertTitle, pageModalNode, resolveDetail)
+    const insertFormNode: ReactNode = childrenArr.find((child) => isValidElement(child) && child.type === PageModalInsertForm)
+    const detailDisplayNode = childrenArr.find(
+        (child): child is ReactElement<PageModalDetailDisplayFormProps> =>
+            isValidElement(child) && child.type === PageModalDetailDisplayForm,
+    )
+
+    let modalTitle: ReactElement = <></>
+    let modalContent: ReactNode = null
+
+    switch (modal.current?.kind) {
+        case MODAL_VIEW_TYPE.INSERT_FORM: {
+            modalTitle = <h2>{insertTitle}</h2>
+            modalContent = insertFormNode
+            break
+        }
+        case MODAL_VIEW_TYPE.DETAIL_DISPLAY: {
+            if (detailDisplayNode == null) {
+                break
+            }
+            const {resolveDetail, resolveTitle, resolveDetailDisplay} = detailDisplayNode.props
+            const detail = resolveDetail(modal.current.id)
+            if (detail == null) {
+                break
+            }
+            modalTitle = <h2>{resolveTitle(detail)}</h2>
+            modalContent = <ModalDetailDisplay {...resolveDetailDisplay(detail)}/>
+            break
+        }
+        default:
+            break
+    }
 
     return (
         <Modal
@@ -48,36 +84,9 @@ export function PageModal({
             style={style}
         >
             <ModalTitle>
-                {presented.title}
+                {modalTitle}
             </ModalTitle>
-            {presented.body}
+            {modalContent}
         </Modal>
     )
-}
-
-function presentModalView(
-    modal: PageModalController,
-    insertTitle: string,
-    insertContent: ReactNode,
-    resolveDetail: (id: number) => PageModalDetail | null,
-): {title: ReactElement, body: ReactNode} {
-    switch (modal.current?.kind) {
-        case MODAL_VIEW_TYPE.INSERT_FORM:
-            return {
-                title: <h2>{insertTitle}</h2>,
-                body: insertContent,
-            }
-        case MODAL_VIEW_TYPE.DETAIL_DISPLAY: {
-            const detail = resolveDetail(modal.current.id)
-            if (detail == null) {
-                return {title: <></>, body: null}
-            }
-            return {
-                title: <h2>{detail.title}</h2>,
-                body: detail.content,
-            }
-        }
-        default:
-            return {title: <></>, body: null}
-    }
 }

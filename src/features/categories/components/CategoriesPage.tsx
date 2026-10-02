@@ -1,5 +1,5 @@
 import {useState, useEffect, Fragment, type SyntheticEvent} from 'react'
-import {List, ListItem, Fab, ModalDetailDisplay, PageModal, Spinner, usePageModal} from '../../../shared/ui'
+import {List, ListItem, Fab, PageModal, Spinner, usePageModal} from '../../../shared/ui'
 import {CategoriesForm} from './CategoriesForm.tsx'
 import {
     type CategoryGroup,
@@ -12,7 +12,7 @@ import {
 import {type CategoryDao, getAllCategories, insertCategory} from "../repository.ts";
 import {toCategoryDetailView} from '../detailDisplay.ts'
 import {Add} from "../../../shared/icon";
-import {PageModalContent} from "../../../shared/ui/PageModal.tsx";
+import {PageModalDetailDisplayForm, PageModalInsertForm} from "../../../shared/ui/PageModal.tsx";
 
 export function CategoriesPage() {
     const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([])
@@ -142,29 +142,25 @@ export function CategoriesPage() {
           <PageModal
               modal={pageModal}
               insertTitle="Add New Category"
-              resolveDetail={(id) => {
-                  const categoryGroup = getCategoryGroup(id)
-                  if (categoryGroup == null) return null
-                  return {
-                      title: categoryGroup.parent.name,
-                      content: (
-                          <ModalDetailDisplay
-                              {...toCategoryDetailView(categoryGroup, pageModal.openDetail)}
-                          />
-                      ),
-                  }
-              }}
               style={{
                   zIndex: 69
               }}
           >
-              <PageModalContent>
+              <PageModalInsertForm>
                   <CategoriesForm
                       isLoading={isInserting}
                       availableCategories={categoriesList}
                       onSubmitHandler={addNewCategory}
                   />
-              </PageModalContent>
+              </PageModalInsertForm>
+
+              <PageModalDetailDisplayForm
+                  resolveDetail={(id) => getCategoryGroup(id)}
+                  resolveTitle={(group) => group == null ? "" : group.parent.name}
+                  resolveDetailDisplay={(group) =>
+                  // @ts-ignore
+                      toCategoryDetailView(group, pageModal.openDetail)}
+              />
           </PageModal>
           <Fab onClick={pageModal.openInsertForm}>
               <Add width={2.75}/>

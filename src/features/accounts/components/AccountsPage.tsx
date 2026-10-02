@@ -12,7 +12,6 @@ import {
 import {
     Fab,
     List,
-    ModalDetailDisplay,
     PageModal,
     Spinner,
     ListItem,
@@ -27,7 +26,7 @@ import {AccountsForm} from "./AccountsForm.tsx";
 import {minorUnitsToCurrencyDisplay} from "../../../shared/utility";
 import {Add} from "../../../shared/icon";
 import {toAccountDetailView} from '../detailDisplay.ts'
-import {PageModalContent} from "../../../shared/ui/PageModal.tsx";
+import {PageModalDetailDisplayForm, PageModalInsertForm} from "../../../shared/ui/PageModal.tsx";
 
 export function AccountsPage() {
     const [accountsList, setAccountsList] = useState<Account[]>([])
@@ -124,8 +123,9 @@ export function AccountsPage() {
         pageModal.openInsertForm()
     }
 
-    function getAccount(id: number): Account | undefined {
-        return accountsList.find((account) => account.id === id)
+    function getAccount(id: number): Account | null {
+        const foundAccount: Account | undefined = accountsList.find((account) => account.id === id)
+        return foundAccount ?? null
     }
 
     return (
@@ -145,22 +145,20 @@ export function AccountsPage() {
             <PageModal
                 modal={pageModal}
                 insertTitle="Add Account"
-                resolveDetail={(id) => {
-                    const account = getAccount(id)
-                    if (account == null) return null
-                    return {
-                        title: account.name,
-                        content: <ModalDetailDisplay {...toAccountDetailView(account)}/>,
-                    }
-                }}
             >
-                <PageModalContent>
+                <PageModalInsertForm>
                     <AccountsForm
                         key={formKey}
                         onSubmitHandler={addNewAccount}
                         isLoading={isInserting}
                     />
-                </PageModalContent>
+                </PageModalInsertForm>
+                <PageModalDetailDisplayForm
+                    resolveDetail={(id) => getAccount(id)}
+                    resolveTitle={(account) => account == null ? "" : account.name}
+                    // @ts-ignore
+                    resolveDetailDisplay={(account) => toAccountDetailView(account)}
+                />
             </PageModal>
         </section>
     )
