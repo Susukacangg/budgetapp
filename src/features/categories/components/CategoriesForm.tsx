@@ -1,6 +1,7 @@
-import {useState, useMemo, type SyntheticEvent} from 'react'
+import {useState, useMemo, type SyntheticEvent, type ChangeEvent} from 'react'
 import {AppForm, Spinner} from '../../../shared/ui'
 import {type Category, CATEGORY_TYPES, type CategoryType} from '../model.ts'
+import {FormInput} from "../../../shared/ui/FormInput.tsx";
 
 type CategoriesFormProps = {
     onSubmitHandler?: (event: SyntheticEvent<HTMLFormElement>) => void,
@@ -23,49 +24,32 @@ export function CategoriesForm({onSubmitHandler, isLoading, availableCategories}
             <label htmlFor="category_name">
                 Category Name
             </label>
-            <input type="text" name="category_name" autoComplete="off"/>
+            <FormInput type="text" name="category_name"/>
 
             <label htmlFor="category_type">
                 Category Type
             </label>
-            <select
+            <FormInput
+                type="select"
                 name="category_type"
-                id="category_type"
                 value={selectedCategoryType}
-                onChange={(e) => setSelectedCategoryType(e.target.value as CategoryType)}
-            >
-                {categoryTypes.map((type) => (
-                    <option
-                        key={type}
-                        value={type}
-                    >
-                        {type}
-                    </option>
-                ))}
-            </select>
+                optionValues={categoryTypes}
+                onChange={(e: ChangeEvent<HTMLSelectElement>) => setSelectedCategoryType(e.target.value as CategoryType)}
+            />
 
             <label htmlFor="category_parent">
                 Parent Category
             </label>
-            <select
+            <FormInput
+                type="select"
                 name="category_parent"
-                id="category_parent"
-            >
-                <option></option>
-                {parentOptions.map((category) => (
-                    <option
-                        key={category.id}
-                        value={category.id}
-                    >
-                        {category.name}
-                    </option>
-                ))}
-            </select>
+                optionValues={parentOptions}
+            />
 
             <label htmlFor="category_desc">
                 Description
             </label>
-            <input type="text" name="category_desc" autoComplete="off"/>
+            <FormInput type="text" name="category_desc"/>
 
             {isLoading ?
                 <Spinner size={2}
@@ -74,7 +58,7 @@ export function CategoriesForm({onSubmitHandler, isLoading, availableCategories}
                              marginTop: '5px'
                          }}
                 /> :
-                <input type="submit"/>}
+                <FormInput type="submit"/>}
         </AppForm>
     )
 }

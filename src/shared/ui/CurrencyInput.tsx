@@ -30,6 +30,7 @@ export function CurrencyInput({name}: Readonly<CurrencyInputProps>) {
     return (
         <>
             <input
+                className="form-input"
                 type="text"
                 name={name}
                 inputMode="numeric"
