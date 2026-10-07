@@ -9,6 +9,7 @@ export function DateTimeInput({name, disabled = false}: DateTimeInputProps) {
         <input
             className="form-input"
             type="datetime-local"
+            id={name}
             name={name}
             disabled={disabled}
         />

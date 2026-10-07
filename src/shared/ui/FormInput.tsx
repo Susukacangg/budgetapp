@@ -3,6 +3,7 @@ import {CurrencyInput} from "./CurrencyInput.tsx";
 import {DateTimeInput} from "./DateTimeInput.tsx";
 import type {CategoryBasic} from "../../features/categories";
 import type {AccountBasic} from "../../features/accounts";
+import {RadioInput} from "./RadioInput.tsx";
 
 type InputType =
     | "text"
@@ -11,6 +12,7 @@ type InputType =
     | "date-time"
     | "textarea"
     | "submit"
+    | "radio"
 
 type CommonProps = {
     readonly autoComplete?: boolean
@@ -81,6 +83,7 @@ export function FormInput({
             return <input
                         className="form-input"
                         type="text"
+                        id={name}
                         name={name}
                         value={value}
                         autoComplete={autoComplete ? "on" : "off"}
@@ -117,6 +120,8 @@ export function FormInput({
                         className="form-input"
                         rows={5}
                         disabled={isDisabled}
+                        id={name}
+                        name={name}
             />
         }
         case "submit" : {
@@ -125,6 +130,12 @@ export function FormInput({
                         type="submit"
                         disabled={isDisabled}
             />
+        }
+        case "radio" : {
+            return <RadioInput
+                        name={name}
+                        value={value}
+                    />
         }
         default: {
             // @ts-expect-error Other form input types that are not defined will throw an error

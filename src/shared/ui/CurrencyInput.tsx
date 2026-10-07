@@ -33,6 +33,7 @@ export function CurrencyInput({name, disabled = false}: Readonly<CurrencyInputPr
             <input
                 className="form-input"
                 type="text"
+                id={name}
                 name={name}
                 inputMode="numeric"
                 autoComplete="off"
@@ -43,6 +44,7 @@ export function CurrencyInput({name, disabled = false}: Readonly<CurrencyInputPr
             />
             <input
                 type="hidden"
+                id={`${name}_submit`}
                 name={`${name}_submit`}
                 value={minorUnits}
                 disabled={disabled}
