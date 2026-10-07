@@ -1,13 +1,16 @@
 
 type DateTimeInputProps = {
-    name: string
+    name: string,
+    disabled?: boolean
 }
 
-export function DateTimeInput({name}: DateTimeInputProps) {
+export function DateTimeInput({name, disabled = false}: DateTimeInputProps) {
     return (
         <input
             className="form-input"
             type="datetime-local"
-            name={name}/>
+            name={name}
+            disabled={disabled}
+        />
     )
 }

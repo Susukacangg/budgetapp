@@ -2,9 +2,10 @@ import {type KeyboardEvent, useState} from 'react'
 
 type CurrencyInputProps = {
     name: string
+    disabled?: boolean
 }
 
-export function CurrencyInput({name}: Readonly<CurrencyInputProps>) {
+export function CurrencyInput({name, disabled = false}: Readonly<CurrencyInputProps>) {
     const [minorUnits, setMinorUnits] = useState('0')
     const padded = minorUnits.padStart(3, '0')
     const display = `${padded.slice(0, -2)}.${padded.slice(-2)}`
@@ -38,11 +39,13 @@ export function CurrencyInput({name}: Readonly<CurrencyInputProps>) {
                 value={display}
                 onKeyDown={onKeyDown}
                 onChange={() => {}}
+                disabled={disabled}
             />
             <input
                 type="hidden"
                 name={`${name}_submit`}
                 value={minorUnits}
+                disabled={disabled}
             />
         </>
     )

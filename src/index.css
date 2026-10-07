@@ -452,6 +452,7 @@ div:has(> .app-form) {
 }
 
 .form-input {
+  padding: 5px;
   outline: none;
   border: none;
   border-bottom-width: 2px;
@@ -466,6 +467,14 @@ div:has(> .app-form) {
 
 textarea.form-input {
   border: 2px solid var(--border);
+}
+
+select.form-input {
+  cursor: pointer;
+}
+
+input[type="datetime-local"].form-input {
+  cursor: text;
 }
 
 .form-input:focus {

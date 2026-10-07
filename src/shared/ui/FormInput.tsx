@@ -1,8 +1,8 @@
 import * as React from "react";
 import {CurrencyInput} from "./CurrencyInput.tsx";
 import {DateTimeInput} from "./DateTimeInput.tsx";
-import type {Category} from "../../features/categories";
-import type {Account} from "../../features/accounts";
+import type {CategoryBasic} from "../../features/categories";
+import type {AccountBasic} from "../../features/accounts";
 
 type InputType =
     | "text"
@@ -15,11 +15,12 @@ type InputType =
 type CommonProps = {
     readonly autoComplete?: boolean
     readonly value?: string | number | readonly string[]
+    readonly isDisabled?: boolean
     onKeydown?: React.KeyboardEventHandler<HTMLInputElement>
     onChange?: React.ChangeEventHandler
 }
 
-type FormInputProps<TDetail = readonly (string | Account | Category) []> =
+type FormInputProps<TDetail = readonly (string | AccountBasic | CategoryBasic) []> =
     | (CommonProps & {
         readonly name: string
         readonly type: "select"
@@ -40,6 +41,7 @@ export function FormInput({
       type,
       name,
       autoComplete = false,
+      isDisabled = false,
       value,
       optionValues,
       onChange
@@ -83,9 +85,13 @@ export function FormInput({
                         value={value}
                         autoComplete={autoComplete ? "on" : "off"}
                         onChange={onChange}
+                        disabled={isDisabled}
                     />
         case "currency":
-            return <CurrencyInput name={name}/>
+            return <CurrencyInput
+                        name={name}
+                        disabled={isDisabled}
+                    />
         case "select": {
             return (
                 <select
@@ -94,23 +100,31 @@ export function FormInput({
                     name={name}
                     value={value}
                     onChange={onChange}
+                    disabled={isDisabled}
                 >
                     {renderOptions()}
                 </select>
             )
         }
         case "date-time" : {
-            return <DateTimeInput name={name}/>
+            return <DateTimeInput
+                        name={name}
+                        disabled={isDisabled}
+                    />
         }
         case "textarea" : {
             return <textarea
                         className="form-input"
-                        rows={5}/>
+                        rows={5}
+                        disabled={isDisabled}
+            />
         }
         case "submit" : {
             return <input
                         className="form-input"
-                        type="submit"/>
+                        type="submit"
+                        disabled={isDisabled}
+            />
         }
         default: {
             // @ts-expect-error Other form input types that are not defined will throw an error
