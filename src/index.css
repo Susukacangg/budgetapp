@@ -637,5 +637,5 @@ input[type="radio"]:not(:checked) + span:hover{
 }
 
 input[type="radio"]:not(:checked) + span:active{
-  background-color: color-mix(in srgb, var(--accent) 15%, white);
+  background-color: color-mix(in srgb, var(--accent) 20%, white);
 }

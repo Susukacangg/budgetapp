@@ -5,6 +5,7 @@ import {AppForm} from './AppForm.tsx'
 import {Fab} from './Fab.tsx'
 import {List} from './List.tsx'
 import {ListItem} from './ListItem.tsx'
+import {FormInput} from "./FormInput.tsx";
 
 type ModalDetailDisplayProps = ModalListItemDetailView
 
@@ -25,10 +26,9 @@ export function ModalDetailDisplay({
             {displayFields.map((field) => (
                 <Fragment key={field.htmlFor}>
                     <label htmlFor={field.htmlFor}>{field.label}</label>
-                    <input
+                    <FormInput
                         type="text"
                         name={field.htmlFor}
-                        readOnly
                         value={field.value}
                     />
                 </Fragment>

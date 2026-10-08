@@ -17,8 +17,8 @@ type InputType =
 type CommonProps = {
     readonly autoComplete?: boolean
     readonly value?: string | number | readonly string[]
-    readonly isDisabled?: boolean
-    onKeydown?: React.KeyboardEventHandler<HTMLInputElement>
+    readonly disabled?: boolean
+    onKeydown?: React.KeyboardEventHandler
     onChange?: React.ChangeEventHandler
 }
 
@@ -26,27 +26,38 @@ type FormInputProps<TDetail = readonly (string | AccountBasic | CategoryBasic) [
     | (CommonProps & {
         readonly name: string
         readonly type: "select"
+        readonly checked?: never
         readonly optionValues: TDetail
     })
     | (CommonProps & {
-        readonly name?: never
         readonly type: "submit"
+        readonly name?: never
+        readonly checked?: never
         readonly optionValues?: never
     })
     | (CommonProps & {
         readonly name: string
-        readonly type: Exclude<InputType, "select">
+        readonly type: "radio"
+        readonly checked?: boolean
         readonly optionValues?: never
+    })
+    | (CommonProps & {
+        readonly name: string
+        readonly type: Exclude<InputType, "select" | "radio" | "submit">
+        readonly optionValues?: never
+        readonly checked?: never
     })
 
 export function FormInput({
       type,
       name,
       autoComplete = false,
-      isDisabled = false,
+      disabled = false,
       value,
       optionValues,
-      onChange
+      checked,
+      onKeydown,
+      onChange,
 }: FormInputProps) {
 
     function renderOptions() {
@@ -88,12 +99,13 @@ export function FormInput({
                         value={value}
                         autoComplete={autoComplete ? "on" : "off"}
                         onChange={onChange}
-                        disabled={isDisabled}
+                        onKeyDown={onKeydown}
+                        disabled={disabled}
                     />
         case "currency":
             return <CurrencyInput
                         name={name}
-                        disabled={isDisabled}
+                        disabled={disabled}
                     />
         case "select": {
             return (
@@ -103,7 +115,8 @@ export function FormInput({
                     name={name}
                     value={value}
                     onChange={onChange}
-                    disabled={isDisabled}
+                    onKeyDown={onKeydown}
+                    disabled={disabled}
                 >
                     {renderOptions()}
                 </select>
@@ -112,29 +125,33 @@ export function FormInput({
         case "date-time" : {
             return <DateTimeInput
                         name={name}
-                        disabled={isDisabled}
+                        disabled={disabled}
                     />
         }
         case "textarea" : {
             return <textarea
                         className="form-input"
                         rows={5}
-                        disabled={isDisabled}
+                        disabled={disabled}
                         id={name}
                         name={name}
+                        onChange={onChange}
+                        onKeyDown={onKeydown}
             />
         }
         case "submit" : {
             return <input
                         className="form-input"
                         type="submit"
-                        disabled={isDisabled}
+                        disabled={disabled}
             />
         }
         case "radio" : {
             return <RadioInput
                         name={name}
                         value={value}
+                        onChange={onChange}
+                        checked={checked}
                     />
         }
         default: {
