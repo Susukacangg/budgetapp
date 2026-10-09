@@ -1,4 +1,4 @@
-import {type CategoryDao} from './repository.ts'
+import {type CategoryBasicDao, type CategoryDao} from './repository.ts'
 import {z} from 'zod'
 
 export const CATEGORY_TYPES = {
@@ -19,6 +19,13 @@ export type Category = {
 export type CategoryGroup = {
   parent: Category,
   children: Category[]
+}
+
+export type CategoryBasic = {
+  readonly id: number
+  readonly name: string
+  readonly type: CategoryType
+  readonly parentId: number | null
 }
 
 export function groupCategories(categories: readonly Category[]): CategoryGroup[] {
@@ -49,6 +56,15 @@ export function convertCategoryFromDao(categoryDao: CategoryDao): Category {
     parentId: categoryDao.category_parent,
     categoryDesc: categoryDao.category_desc,
     createdAt: categoryDao.created_at,
+  }
+}
+
+export function convertCategoryBasicFromDao(categoryBasicDao: CategoryBasicDao): CategoryBasic {
+  return {
+    id: categoryBasicDao.id,
+    name: categoryBasicDao.category_name,
+    type: categoryBasicDao.category_type as CategoryType,
+    parentId: categoryBasicDao.category_parent,
   }
 }
 

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { AccountDao } from './repository.ts'
+import type {AccountBasicDao, AccountDao} from './repository.ts'
 
 export const ACCOUNT_TYPES = ['Cash', 'Debit Card', 'Credit Card', 'E-Wallet'] as const
 export type AccountType = (typeof ACCOUNT_TYPES)[number]
@@ -13,6 +13,11 @@ export type Account = {
   readonly createdAt: string
 }
 
+export type AccountBasic = {
+  readonly id: number
+  readonly name: string
+}
+
 export function convertAccountFromDao(accountDao: AccountDao): Account {
   return {
     id: accountDao.id,
@@ -21,6 +26,13 @@ export function convertAccountFromDao(accountDao: AccountDao): Account {
     balance:accountDao.account_balance,
     accountDesc:accountDao.account_desc,
     createdAt:accountDao.created_at
+  }
+}
+
+export function convertAccountBasicFromDao(accountBasicDao: AccountBasicDao): AccountBasic {
+  return {
+    id: accountBasicDao.id,
+    name: accountBasicDao.account_name
   }
 }
 

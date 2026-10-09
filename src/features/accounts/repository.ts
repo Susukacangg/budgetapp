@@ -9,6 +9,11 @@ export type AccountDao = {
   readonly created_at: string
 }
 
+export type AccountBasicDao = {
+  readonly id: number
+  readonly account_name: string
+}
+
 export async function insert(newAccount: AccountDao): Promise<AccountDao> {
   const { data, error } = await supabase
       .from('account')
@@ -25,6 +30,17 @@ export async function getAllAccounts(): Promise<AccountDao[]> {
   const {data, error} = await supabase
       .from('account')
       .select()
+  if (error) {
+    throw error
+  }
+  return data;
+}
+
+export async function getAllAccountNamesAndIds(): Promise<AccountBasicDao[]> {
+  const {data, error} = await supabase
+      .from("account")
+      .select("id, account_name")
+
   if (error) {
     throw error
   }
