@@ -24,6 +24,7 @@
   font: 16px/1.5 var(--sans);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  interpolate-size: allow-keywords;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -64,6 +65,11 @@ select {
   align-items: center;
   line-height: 1;
   padding: 0;
+  cursor: pointer;
+}
+
+select:disabled {
+  cursor: progress;
 }
 
 select,
@@ -73,11 +79,50 @@ select,
   border-radius: 0;
 }
 
+::picker(select) {
+  box-sizing: border-box;
+  height: 0;
+  min-height: 0;
+  min-block-size: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    display 100ms allow-discrete,
+    overlay 100ms allow-discrete,
+    opacity 250ms linear,
+    height 275ms linear;
+}
+
+select:open::picker(select) {
+  height: auto;
+  opacity: 1;
+}
+
+select:not(:open)::picker(select) {
+  height: 0;
+  opacity: 0;
+}
+
 select::picker-icon {
-  content: "∨";
+  content: "";
   color: var(--accent);
-  font-size: 1.25rem;
-  font-weight: bolder;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: currentColor;
+  mask: url("../public/icons/picker-icon.svg") center / contain no-repeat;
+  -webkit-mask: url("../public/icons/picker-icon.svg") center / contain no-repeat;
+  transition: transform 250ms linear;
+}
+
+select:open::picker-icon {
+  transform: rotate(180deg);
+}
+
+@starting-style {
+  select:open::picker(select) {
+    height: 0;
+    opacity: 0;
+  }
 }
 
 option {
@@ -467,10 +512,6 @@ div:has(> .app-form) {
 
 textarea.form-input {
   border: 2px solid var(--border);
-}
-
-select.form-input {
-  cursor: pointer;
 }
 
 input[type="datetime-local"].form-input {
