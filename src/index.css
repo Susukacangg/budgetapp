@@ -851,6 +851,8 @@ input[type="radio"]:not(:checked) + span:active{
   box-sizing: border-box;
   font: inherit;
   font-size: var(--input-font-size);
+  /* Empty labels generate no line box, so the row would collapse to padding only. */
+  min-height: 1lh;
   color: inherit;
   text-align: start;
   outline: none;

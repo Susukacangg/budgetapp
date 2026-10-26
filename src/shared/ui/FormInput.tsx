@@ -18,6 +18,7 @@ type CommonProps = {
     readonly autoComplete?: boolean
     readonly value?: string | number | readonly string[]
     readonly disabled?: boolean
+    readonly readonly?: boolean
     onKeydown?: React.KeyboardEventHandler
     onChange?: React.ChangeEventHandler
 }
@@ -60,6 +61,7 @@ export function FormInput({
       value,
       isLoading,
       checked,
+      readonly,
       children,
       onKeydown,
       onChange,
@@ -77,6 +79,7 @@ export function FormInput({
                         onChange={onChange}
                         onKeyDown={onKeydown}
                         disabled={disabled}
+                        readOnly={readonly}
                     />
         case "currency":
             return <CurrencyInput
@@ -109,6 +112,7 @@ export function FormInput({
                         name={name}
                         onChange={onChange}
                         onKeyDown={onKeydown}
+                        readOnly={readonly}
             />
         }
         case "submit" : {
