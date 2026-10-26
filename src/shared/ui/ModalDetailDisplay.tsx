@@ -30,6 +30,7 @@ export function ModalDetailDisplay({
                         type="text"
                         name={field.htmlFor}
                         value={field.value}
+                        readonly={true}
                     />
                 </Fragment>
             ))}
