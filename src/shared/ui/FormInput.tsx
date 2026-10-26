@@ -1,9 +1,9 @@
 import * as React from "react";
 import {CurrencyInput} from "./CurrencyInput.tsx";
 import {DateTimeInput} from "./DateTimeInput.tsx";
-import type {CategoryBasic} from "../../features/categories";
-import type {AccountBasic} from "../../features/accounts";
 import {RadioInput} from "./RadioInput.tsx";
+import {SelectInput} from "./SelectInput.tsx";
+import type {ReactNode} from "react";
 
 type InputType =
     | "text"
@@ -22,30 +22,34 @@ type CommonProps = {
     onChange?: React.ChangeEventHandler
 }
 
-type FormInputProps<TDetail = readonly (string | AccountBasic | CategoryBasic) []> =
+type FormInputProps =
     | (CommonProps & {
         readonly name: string
         readonly type: "select"
+        readonly isLoading?: boolean
         readonly checked?: never
-        readonly optionValues: TDetail
+        readonly children: ReactNode
     })
     | (CommonProps & {
-        readonly type: "submit"
         readonly name?: never
+        readonly type: "submit"
+        readonly isLoading?: never
         readonly checked?: never
-        readonly optionValues?: never
+        readonly children?: never
     })
     | (CommonProps & {
         readonly name: string
         readonly type: "radio"
+        readonly isLoading?: never
         readonly checked?: boolean
-        readonly optionValues?: never
+        readonly children?: never
     })
     | (CommonProps & {
         readonly name: string
-        readonly type: Exclude<InputType, "select" | "radio" | "submit">
-        readonly optionValues?: never
+        readonly type: Exclude<InputType, "select" | "submit" | "radio">
+        readonly isLoading?: never
         readonly checked?: never
+        readonly children?: never
     })
 
 export function FormInput({
@@ -54,40 +58,12 @@ export function FormInput({
       autoComplete = false,
       disabled = false,
       value,
-      optionValues,
+      isLoading,
       checked,
+      children,
       onKeydown,
       onChange,
 }: FormInputProps) {
-
-    function renderOptions() {
-        if (optionValues === undefined || optionValues === null) {
-            return null
-        } else {
-            return (
-                optionValues.map((opt) => {
-                    let optionValue;
-                    let optionDisplayValue;
-
-                    if (typeof opt === "string") {
-                        optionValue = opt
-                        optionDisplayValue = opt
-                    } else {
-                        optionValue = opt.id
-                        optionDisplayValue = opt.name
-                    }
-
-                    return (
-                        <option
-                            key={optionValue}
-                            value={optionValue}
-                        >
-                            {optionDisplayValue}
-                        </option>)
-                })
-            )
-        }
-    }
 
     switch (type) {
         case "text":
@@ -109,17 +85,13 @@ export function FormInput({
                     />
         case "select": {
             return (
-                <select
-                    className="form-input"
-                    id={name}
+                <SelectInput
                     name={name}
-                    value={value}
-                    onChange={onChange}
-                    onKeyDown={onKeydown}
                     disabled={disabled}
+                    isLoading={isLoading}
                 >
-                    {renderOptions()}
-                </select>
+                    {children}
+                </SelectInput>
             )
         }
         case "date-time" : {
