@@ -19,7 +19,7 @@ export function PageModalInsertForm({children}: PageModalInsertFormProps) {
     )
 }
 
-export type PageModalDetailDisplayFormProps<TDetail = Account | CategoryGroup | null> = {
+export type PageModalDetailDisplayFormProps<TDetail = Account | CategoryGroup> = {
     resolveDetail: (id: number) => TDetail
     resolveTitle: (detail: TDetail) => string
     resolveDetailDisplay: (detail: TDetail) => ModalListItemDetailView
