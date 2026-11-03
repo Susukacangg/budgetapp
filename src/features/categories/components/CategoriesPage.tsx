@@ -173,7 +173,7 @@ export function CategoriesPage() {
               </PageModalInsertForm>
 
               <PageModalDetailDisplayForm
-                  resolveDetail={(id) => resolveCategoryGroup(id) as CategoryGroup}
+                  resolveDetail={(id) => resolveCategoryGroup(id)}
                   resolveTitle={(group) => group == null ? "" : group.parent.name}
                   resolveDetailDisplay={(group) =>
                       toCategoryDetailView(group, pageModal.openDetail)}
