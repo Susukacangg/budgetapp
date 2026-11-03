@@ -135,7 +135,7 @@ export function CategoriesPage() {
         )
     }
 
-    function resolveCategoryGroup(id: number): CategoryGroup | undefined {
+    function resolveCategoryGroup(id: number): CategoryGroup {
         const topLevelGroup = categoryGroups.find((group) => group.parent.id === id)
         if (topLevelGroup != null) return topLevelGroup
 
@@ -143,7 +143,7 @@ export function CategoriesPage() {
         const subcategory = categoryGroups
             .flatMap((group) => group.children)
             .find((child) => child.id === id)
-        return subcategory == null ? undefined : {parent: subcategory, children: []}
+        return subcategory as unknown as CategoryGroup
     }
 
     return (
