@@ -3,6 +3,7 @@ import {AppForm, Spinner} from '../../../shared/ui'
 import {type Category, CATEGORY_TYPES, type CategoryType} from '../model.ts'
 import {FormInput} from "../../../shared/ui/FormInput.tsx";
 import * as React from "react";
+import {SelectOption} from "../../../shared/ui/SelectInput.tsx";
 
 type CategoriesFormProps = {
     onSubmitHandler?: (event: SyntheticEvent<HTMLFormElement>) => void,
@@ -47,8 +48,16 @@ export function CategoriesForm({onSubmitHandler, isLoading, availableCategories}
             <FormInput
                 type="select"
                 name="category_parent"
-                optionValues={parentOptions}
-            />
+            >
+                <SelectOption
+                    value={""}
+                    displayValue={""}/>
+                {parentOptions.map((opt) => (
+                    <SelectOption
+                        value={opt.id}
+                        displayValue={opt.name}/>
+                ))}
+            </FormInput>
 
             <label htmlFor="category_desc">
                 Description

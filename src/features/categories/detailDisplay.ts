@@ -20,10 +20,10 @@ export function toCategoryDetailView(
                 value: parent.categoryDesc ?? '',
             },
         ],
-        sublistSection: children.length > 0
+        sublistSection: children?.length > 0
             ? {
                 title: 'Subcategories',
-                items: children.map((child) => ({
+                items: children?.map((child) => ({
                     id: child.id,
                     label: child.name,
                 })),

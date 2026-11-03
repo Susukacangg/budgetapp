@@ -1,4 +1,3 @@
-import {type CategoryBasicDao, type CategoryDao} from './repository.ts'
 import {z} from 'zod'
 
 export const CATEGORY_TYPES = {
@@ -21,66 +20,24 @@ export type CategoryGroup = {
   children: Category[]
 }
 
-export type CategoryBasic = {
+export type CategoryDao = {
   readonly id: number
-  readonly name: string
-  readonly type: CategoryType
-  readonly parentId: number | null
+  readonly category_name: string
+  readonly category_type: string
+  readonly category_parent: number | null
+  readonly category_desc: string | null
+  readonly created_at: string
 }
 
-export function groupCategories(categories: readonly Category[]): CategoryGroup[] {
-  const childrenByParentId = new Map<number, Category[]>
-
-  // find the subcategories and group them in their respective arrays based on their parentId
-  for (const category of categories) {
-    if (category.parentId != null) {
-      const siblingCategories = childrenByParentId.get(category.parentId) ?? []
-      siblingCategories.push(category)
-      childrenByParentId.set(category.parentId, siblingCategories)
-    }
-  }
-
-  return categories
-      .filter((c) => c.parentId == null)
-      .map((parent) => ({
-        parent: parent,
-        children: childrenByParentId.get(parent.id) ?? [],
-      }))
-}
-
-export function convertCategoryFromDao(categoryDao: CategoryDao): Category {
-  return {
-    id: categoryDao.id,
-    name: categoryDao.category_name,
-    type: categoryDao.category_type as CategoryType,
-    parentId: categoryDao.category_parent,
-    categoryDesc: categoryDao.category_desc,
-    createdAt: categoryDao.created_at,
-  }
-}
-
-export function convertCategoryBasicFromDao(categoryBasicDao: CategoryBasicDao): CategoryBasic {
-  return {
-    id: categoryBasicDao.id,
-    name: categoryBasicDao.category_name,
-    type: categoryBasicDao.category_type as CategoryType,
-    parentId: categoryBasicDao.category_parent,
-  }
-}
-
-
-/*
-* form related schemas and types
-* */
-export const insertCategorySchema = z.object({
-  category_name: z.string().trim().min(3, "Category name is required"),
-  category_type: z.enum(CATEGORY_TYPES),
-  category_parent: z.preprocess(
+export const CategoryInsertSchema = z.object({
+  name: z.string().trim().min(3, "Category name is required"),
+  type: z.enum(CATEGORY_TYPES),
+  parentId: z.preprocess(
       (value) => {
         if (value == '' || value == null) return null
         return Number(value)
       },
       z.number().nullable().optional()
   ),
-  category_desc: z.string().trim().optional()
+  categoryDesc: z.string().trim().optional()
 })

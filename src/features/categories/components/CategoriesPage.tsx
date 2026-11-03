@@ -3,16 +3,17 @@ import {List, ListItem, Fab, PageModal, Spinner, usePageModal} from '../../../sh
 import {CategoriesForm} from './CategoriesForm.tsx'
 import {
     type CategoryGroup,
-    groupCategories,
     CATEGORY_TYPES,
-    insertCategorySchema,
-    convertCategoryFromDao,
-    type Category
+    CategoryInsertSchema,
+    type Category,
 } from '../model.ts'
-import {type CategoryDao, getAllCategories, insertCategory} from "../repository.ts";
 import {toCategoryDetailView} from '../detailDisplay.ts'
 import {Add} from "../../../shared/icon";
 import {PageModalDetailDisplayForm, PageModalInsertForm} from "../../../shared/ui/PageModal.tsx";
+import type {CategoryFacade} from "../facade/CategoryFacade.ts";
+import {CategoryFacadeImpl} from "../impl/facade/CategoryFacadeImpl.ts";
+
+const facade: CategoryFacade = new CategoryFacadeImpl()
 
 export function CategoriesPage() {
     const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([])
@@ -21,19 +22,20 @@ export function CategoriesPage() {
     const [isLoadingCategories, setIsLoadingCategories] = useState<boolean>(false)
     const pageModal = usePageModal()
 
+
     useEffect(() => {
         let areCategoriesLoaded = false;
 
         async function loadCategories() {
             try {
                 setIsLoadingCategories(true)
-                const categories: CategoryDao[] = await getAllCategories()
+                const [categories, groupedCategories] = await facade.readAllCategories();
                 // Ignore the Strict Mode (or navigate-away) request that finished after cleanup
                 if (areCategoriesLoaded) return
                 console.log('fetched categories: ', categories)
-                const converted: Category[] = categories.map(convertCategoryFromDao)
-                setCategoriesList(converted)
-                setCategoryGroups(groupCategories(converted))
+                setCategoriesList(categories)
+                console.log(groupedCategories)
+                setCategoryGroups(groupedCategories)
             } catch (err) {
                 if (!areCategoriesLoaded) console.error('get failed:', err)
             } finally {
@@ -53,11 +55,11 @@ export function CategoriesPage() {
         const form = event.currentTarget
         const fd = new FormData(form)
 
-        const parsed = insertCategorySchema.safeParse({
-            category_name: fd.get('category_name'),
-            category_type: fd.get('category_type'),
-            category_parent: fd.get('category_parent'),
-            category_desc: fd.get('category_desc'),
+        const parsed = CategoryInsertSchema.safeParse({
+            name: fd.get('category_name'),
+            type: fd.get('category_type'),
+            parentId: fd.get('category_parent'),
+            categoryDesc: fd.get('category_desc'),
         })
 
         if (!parsed.success) {
@@ -67,11 +69,25 @@ export function CategoriesPage() {
 
         try {
             setIsInserting(true)
-            const saved = await insertCategory(parsed.data as CategoryDao)
+            const saved = await facade.createNewCategory(parsed.data as Category)
             console.log("Inserted: ", saved)
-            const converted = convertCategoryFromDao(saved)
-            setCategoriesList((prev) => [...prev, converted])
-            setCategoryGroups(groupCategories([...categoriesList, converted]))
+            setCategoriesList((prev) => [...prev, saved])
+            setCategoryGroups((prevGrouped) => {
+                if (saved.parentId === null) {
+                    return [...prevGrouped, {
+                        parent: saved,
+                        children: []
+                    }]
+                } else {
+                    const existingGroupIndex: number =
+                        categoryGroups.findIndex((group) => group.parent.id === saved.parentId)
+                    const updatedGroup: CategoryGroup[] = prevGrouped
+                    if (existingGroupIndex > -1)
+                        updatedGroup[existingGroupIndex].children.push(saved)
+                    return updatedGroup
+                }
+
+            })
             pageModal.replaceWithDetail(saved.id)
         } catch (err) {
             console.log("Insert failed: ", err)
@@ -103,13 +119,13 @@ export function CategoriesPage() {
                     onClick={() => pageModal.openDetail(parent.id)}
                 >
                     <div>
-                        <b>{`${parent.name}${children.length > 0 ? ` (${children.length})` : ""}`}</b>
+                        <b>{`${parent.name}${children?.length > 0 ? ` (${children.length})` : ""}`}</b>
                         <p style={{
                             color: "var(--text-muted)",
                             fontStyle: "italic",
                             fontSize: "12px",
                         }}>
-                            {children.map((category, index) => (
+                            {children?.map((category, index) => (
                                 `${category.name}${index === children.length - 1 ? "" : ", "}`
                             ))}
                         </p>
@@ -119,13 +135,15 @@ export function CategoriesPage() {
         )
     }
 
-    function getCategoryGroup(id: number) {
-        const parent = categoriesList.find((cat) => cat.id === id)
-        if (!parent) return null
-        return {
-            parent: parent,
-            children: categoriesList.filter((cat) => cat.parentId === id)
-        }
+    function resolveCategoryGroup(id: number): CategoryGroup | undefined {
+        const topLevelGroup = categoryGroups.find((group) => group.parent.id === id)
+        if (topLevelGroup != null) return topLevelGroup
+
+        // Subcategories are not group parents, so present them as a group with no children.
+        const subcategory = categoryGroups
+            .flatMap((group) => group.children)
+            .find((child) => child.id === id)
+        return subcategory == null ? undefined : {parent: subcategory, children: []}
     }
 
     return (
@@ -155,10 +173,9 @@ export function CategoriesPage() {
               </PageModalInsertForm>
 
               <PageModalDetailDisplayForm
-                  resolveDetail={(id) => getCategoryGroup(id)}
+                  resolveDetail={(id) => resolveCategoryGroup(id) as CategoryGroup}
                   resolveTitle={(group) => group == null ? "" : group.parent.name}
                   resolveDetailDisplay={(group) =>
-                  // @ts-ignore
                       toCategoryDetailView(group, pageModal.openDetail)}
               />
           </PageModal>
