@@ -6,8 +6,7 @@ import {
 } from 'react'
 import {
     type Account, ACCOUNT_TYPES,
-    convertAccountFromDao,
-    insertAccountSchema,
+    AccountInsertSchema,
 } from '../model.ts'
 import {
     Fab,
@@ -17,16 +16,15 @@ import {
     ListItem,
     usePageModal,
 } from '../../../shared/ui/'
-import {
-    insert,
-    getAllAccounts,
-    type AccountDao
-} from "../repository.ts"
 import {AccountsForm} from "./AccountsForm.tsx";
 import {minorUnitsToCurrencyDisplay} from "../../../shared/utility";
 import {Add} from "../../../shared/icon";
 import {toAccountDetailView} from '../detailDisplay.ts'
 import {PageModalDetailDisplayForm, PageModalInsertForm} from "../../../shared/ui/PageModal.tsx";
+import type {AccountFacade} from "../facade/AccountFacade.ts";
+import {AccountFacadeImpl} from "../impl/facade/AccountFacadeImpl.ts";
+
+const facade: AccountFacade = new AccountFacadeImpl()
 
 export function AccountsPage() {
     const [accountsList, setAccountsList] = useState<Account[]>([])
@@ -40,11 +38,11 @@ export function AccountsPage() {
 
         async function loadAccounts() {
             try {
-                const accounts: AccountDao[] = await getAllAccounts()
+                const accounts: Account[] = await facade.readAllAccounts()
                 // Ignore the Strict Mode (or navigate-away) request that finished after cleanup
                 if (areAccountsLoaded) return
                 console.log('fetched accounts: ', accounts)
-                setAccountsList(accounts.map(convertAccountFromDao))
+                setAccountsList(accounts)
                 setIsLoading(false)
             } catch (err) {
                 if (areAccountsLoaded) return
@@ -65,11 +63,11 @@ export function AccountsPage() {
         const form = event.currentTarget
         const fd = new FormData(form)
 
-        const parsed = insertAccountSchema.safeParse({
-            account_name: fd.get('account_name'),
-            account_type: fd.get('account_type'),
-            account_balance: fd.get('account_balance_submit'),
-            account_desc: fd.get('account_desc') || undefined,
+        const parsed = AccountInsertSchema.safeParse({
+            name: fd.get('account_name'),
+            type: fd.get('account_type'),
+            balance: Number(fd.get('account_balance_submit')),
+            accountDesc: fd.get('account_desc'),
         })
 
         if (!parsed.success) {
@@ -79,10 +77,9 @@ export function AccountsPage() {
 
         try {
             setIsInserting(true)
-            const saved = await insert(parsed.data as AccountDao)
+            const saved = await facade.createNewAccount(parsed.data as Account)
             console.log('Inserted:', saved)
-            const converted = convertAccountFromDao(saved)
-            setAccountsList((prev) => [...prev, converted])
+            setAccountsList((prev) => [...prev, saved])
             setFormKey((prev) => prev + 1)
             pageModal.replaceWithDetail(saved.id)
         } catch (err) {
@@ -123,11 +120,6 @@ export function AccountsPage() {
         pageModal.openInsertForm()
     }
 
-    function getAccount(id: number): Account | null {
-        const foundAccount: Account | undefined = accountsList.find((account) => account.id === id)
-        return foundAccount ?? null
-    }
-
     return (
         <section className="page">
             <h2>Accounts</h2>
@@ -154,9 +146,9 @@ export function AccountsPage() {
                     />
                 </PageModalInsertForm>
                 <PageModalDetailDisplayForm
-                    resolveDetail={(id) => getAccount(id)}
+                    resolveDetail={(id) =>
+                        accountsList.find((acc) => acc.id === id) as Account}
                     resolveTitle={(account) => account == null ? "" : account.name}
-                    // @ts-ignore
                     resolveDetailDisplay={(account) => toAccountDetailView(account)}
                 />
             </PageModal>

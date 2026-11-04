@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import type {AccountBasicDao, AccountDao} from './repository.ts'
 
 export const ACCOUNT_TYPES = ['Cash', 'Debit Card', 'Credit Card', 'E-Wallet'] as const
 export type AccountType = (typeof ACCOUNT_TYPES)[number]
@@ -18,31 +17,33 @@ export type AccountBasic = {
   readonly name: string
 }
 
-export function convertAccountFromDao(accountDao: AccountDao): Account {
-  return {
-    id: accountDao.id,
-    name: accountDao.account_name,
-    type:accountDao.account_type as AccountType,
-    balance:accountDao.account_balance,
-    accountDesc:accountDao.account_desc,
-    createdAt:accountDao.created_at
-  }
+export type AccountDao = {
+  readonly id: number
+  readonly account_name: string
+  readonly account_type: string
+  readonly account_balance: number
+  readonly account_desc: string | null
+  readonly created_at: string
 }
-
-export function convertAccountBasicFromDao(accountBasicDao: AccountBasicDao): AccountBasic {
-  return {
-    id: accountBasicDao.id,
-    name: accountBasicDao.account_name
-  }
-}
-
 
 /*
 * form related schemas and types
 * */
-export const insertAccountSchema = z.object({
-  account_name: z.string().trim().min(1, 'Account name is required'),
-  account_type: z.enum(ACCOUNT_TYPES),
-  account_balance: z.coerce.number('Account balance must be a valid number'),
-  account_desc: z.string().trim().optional(),
+export const AccountInsertSchema = z.object({
+  name: z.string().trim().superRefine((val, ctx) => {
+    if (val.length < 1) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Please enter account name"
+      })
+    } else if (val.length < 4) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Account name too short"
+      })
+    }
+  }),
+  type: z.string("Please select account type").trim(),
+  balance: z.number("Account balance cannot be empty"),
+  accountDesc: z.string().trim().nullable(),
 })
