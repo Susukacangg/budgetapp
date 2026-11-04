@@ -13,12 +13,22 @@ export function CurrencyInput({name, disabled = false}: Readonly<CurrencyInputPr
     function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
         if (/^\d$/.test(event.key)) {
             event.preventDefault()
+            /*
+             * if the initial amount is 0 then set to whatever other number like '1'
+             * if it's not '0' then append like '1' + '2' -> '12' (minor units)
+             * padded will pad the minorUnits with 0's, max length of the padded is 3, so 0's won't pad tm like 0000
+             * it would be more like 000 or 012
+             * */
             setMinorUnits((prev) => (prev === '0' ? event.key : prev + event.key))
             return
         }
 
         if (event.key === 'Backspace') {
             event.preventDefault()
+            /*
+            * minor units will not have the padded 0's length
+            * '123' will become '|12|3' -> 12 | 012 if padded
+            * */
             setMinorUnits((prev) => (prev.length <= 1 ? '0' : prev.slice(0, -1)))
             return
         }
