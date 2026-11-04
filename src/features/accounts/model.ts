@@ -12,11 +12,6 @@ export type Account = {
   readonly createdAt: string
 }
 
-export type AccountBasic = {
-  readonly id: number
-  readonly name: string
-}
-
 export type AccountDao = {
   readonly id: number
   readonly account_name: string
